@@ -10,10 +10,10 @@ in enchanted for-loops) and correct logic (compared to the output of
 Krakatau). Of course I'd now need to figure out how to decompile enums.
 
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/IfHelper.java b/src/org/jetbrains/java/decompiler/modules/decompiler/IfHelper.java
-index 89bfae3f4e04424e44bb9e2779bd4f1e2dcd3f8b..dfae2337159f9b532bc5fc5225f39eecdc7e2e9e 100644
+index afcf55e1429a880ca5d945cd127ef90de25daee2..97ddc21fe2cc01d21d962685b6019a5d40f3f83b 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/IfHelper.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/IfHelper.java
-@@ -109,7 +109,7 @@ public class IfHelper {
+@@ -109,7 +109,7 @@ public final class IfHelper {
    private static boolean collapseIfIf(IfNode rtnode) {
      if (rtnode.edgetypes.get(0) == 0) {
        IfNode ifbranch = rtnode.succs.get(0);
@@ -22,7 +22,7 @@ index 89bfae3f4e04424e44bb9e2779bd4f1e2dcd3f8b..dfae2337159f9b532bc5fc5225f39eec
  
          // if-if branch
          if (ifbranch.succs.get(1).value == rtnode.succs.get(1).value) {
-@@ -181,7 +181,7 @@ public class IfHelper {
+@@ -181,7 +181,7 @@ public final class IfHelper {
    private static boolean collapseIfElse(IfNode rtnode) {
      if (rtnode.edgetypes.get(0) == 0) {
        IfNode ifbranch = rtnode.succs.get(0);
@@ -31,7 +31,7 @@ index 89bfae3f4e04424e44bb9e2779bd4f1e2dcd3f8b..dfae2337159f9b532bc5fc5225f39eec
          // if-else branch
          if (ifbranch.succs.get(0).value == rtnode.succs.get(1).value) {
  
-@@ -230,7 +230,7 @@ public class IfHelper {
+@@ -230,7 +230,7 @@ public final class IfHelper {
    }
  
    private static boolean collapseElse(IfNode rtnode) {
@@ -40,17 +40,20 @@ index 89bfae3f4e04424e44bb9e2779bd4f1e2dcd3f8b..dfae2337159f9b532bc5fc5225f39eec
        IfNode elsebranch = rtnode.succs.get(1);
        if (elsebranch.succs.size() == 2) {
  
-@@ -363,6 +363,9 @@ public class IfHelper {
+@@ -363,7 +363,11 @@ public final class IfHelper {
      }
  
      // else branch
-+    if (stat.getAllSuccessorEdges().size() == 0) {
+-    StatEdge edge = stat.getAllSuccessorEdges().get(0);
++    List<StatEdge> successorEdges = stat.getAllSuccessorEdges();
++    if (successorEdges.isEmpty()) {
 +      return res;
 +    }
-     StatEdge edge = stat.getAllSuccessorEdges().get(0);
++    StatEdge edge = successorEdges.get(0);
      Statement elsechild = edge.getDestination();
      IfNode elsenode = new IfNode(elsechild);
-@@ -494,7 +497,7 @@ public class IfHelper {
+ 
+@@ -494,7 +498,7 @@ public final class IfHelper {
  
        ifstat.iftype = IfStatement.IFTYPE_IFELSE;
      }
@@ -60,10 +63,10 @@ index 89bfae3f4e04424e44bb9e2779bd4f1e2dcd3f8b..dfae2337159f9b532bc5fc5225f39eec
        // negate the if condition
        IfExprent statexpr = ifstat.getHeadexprent();
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/LabelHelper.java b/src/org/jetbrains/java/decompiler/modules/decompiler/LabelHelper.java
-index 017218b7bee3fbf993b890b4e007f65c0a84f177..397bb9a7031f31ebeab4128ac33e4744ac04289c 100644
+index 05e945fa82190610c0147389204d579d3d1d61e4..d5b9e29a2b5bb09084ebc9f82660ec34515a8749 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/LabelHelper.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/LabelHelper.java
-@@ -254,7 +254,7 @@ public class LabelHelper {
+@@ -254,7 +254,7 @@ public final class LabelHelper {
            Statement stt = swst.getCaseStatements().get(i);
            Statement stnext = swst.getCaseStatements().get(i + 1);
  
@@ -72,7 +75,7 @@ index 017218b7bee3fbf993b890b4e007f65c0a84f177..397bb9a7031f31ebeab4128ac33e4744
              stnext = stnext.getAllSuccessorEdges().get(0).getDestination();
            }
            processEdgesWithNext(stt, setExplicitEdges(stt), stnext);
-@@ -263,7 +263,7 @@ public class LabelHelper {
+@@ -263,7 +263,7 @@ public final class LabelHelper {
          int last = swst.getCaseStatements().size() - 1;
          if (last >= 0) { // empty switch possible
            Statement stlast = swst.getCaseStatements().get(last);
@@ -81,7 +84,7 @@ index 017218b7bee3fbf993b890b4e007f65c0a84f177..397bb9a7031f31ebeab4128ac33e4744
              StatEdge edge = stlast.getAllSuccessorEdges().get(0);
              mapEdges.put(edge.getDestination(), new ArrayList<>(Collections.singletonList(edge)));
            }
-@@ -387,7 +387,7 @@ public class LabelHelper {
+@@ -387,7 +387,7 @@ public final class LabelHelper {
        if (last >= 0) { // empty switch possible
          Statement stlast = swst.getCaseStatements().get(last);
  
@@ -91,10 +94,10 @@ index 017218b7bee3fbf993b890b4e007f65c0a84f177..397bb9a7031f31ebeab4128ac33e4744
              List<StatEdge> lstEdges = swst.getCaseEdges().get(last);
              lstEdges.remove(swst.getDefault_edge());
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/LoopExtractHelper.java b/src/org/jetbrains/java/decompiler/modules/decompiler/LoopExtractHelper.java
-index 52796181c35878da2c5053c88432ce8367a2f3c7..8d3dc65ccb67b1da34e4e2d3f95ea1c5a1af2d2f 100644
+index 04b82fc67fca471f6c868c227df24160e57edb5f..c91493adb522317f91bda2a18dfd91b436cd7927 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/LoopExtractHelper.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/LoopExtractHelper.java
-@@ -102,6 +102,9 @@ public class LoopExtractHelper {
+@@ -102,6 +102,9 @@ public final class LoopExtractHelper {
        IfStatement lastif = (IfStatement)last;
        if (lastif.iftype == IfStatement.IFTYPE_IF && lastif.getIfstat() != null) {
          Statement ifstat = lastif.getIfstat();
@@ -105,10 +108,10 @@ index 52796181c35878da2c5053c88432ce8367a2f3c7..8d3dc65ccb67b1da34e4e2d3f95ea1c5
  
          if (elseedge.getType() == StatEdge.TYPE_CONTINUE && elseedge.closure == stat) {
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/SwitchHelper.java b/src/org/jetbrains/java/decompiler/modules/decompiler/SwitchHelper.java
-index fe77dd7ea6ac6c877230b0c8d4b138a5e49d60dc..5beebb2996e804ea1385841e7cd02ec5567a4603 100644
+index 5e9a0d721e8826694c7ba005bcf89127f22b0900..d040d895d2599c55364c5c42bb8bd7a4e269efcb 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/SwitchHelper.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/SwitchHelper.java
-@@ -47,7 +47,7 @@ public class SwitchHelper {
+@@ -47,7 +47,7 @@ public final class SwitchHelper {
        FieldExprent arrayField = (FieldExprent)array.getArray();
        ClassesProcessor.ClassNode classNode =
          DecompilerContext.getClassProcessor().getMapRootClasses().get(arrayField.getClassname());
@@ -117,7 +120,7 @@ index fe77dd7ea6ac6c877230b0c8d4b138a5e49d60dc..5beebb2996e804ea1385841e7cd02ec5
          MethodWrapper wrapper = classNode.getWrapper().getMethodWrapper(CodeConstants.CLINIT_NAME, "()V");
          if (wrapper != null && wrapper.root != null) {
            wrapper.getOrBuildGraph().iterateExprents(exprent -> {
-@@ -137,6 +137,7 @@ public class SwitchHelper {
+@@ -137,6 +137,7 @@ public final class SwitchHelper {
    }
  
    public static final int STATIC_FINAL_SYNTHETIC = CodeConstants.ACC_STATIC | CodeConstants.ACC_FINAL | CodeConstants.ACC_SYNTHETIC;
@@ -125,7 +128,7 @@ index fe77dd7ea6ac6c877230b0c8d4b138a5e49d60dc..5beebb2996e804ea1385841e7cd02ec5
    /**
     * When Java introduced Enums they added the ability to use them in Switch statements.
     * This was done in a purely syntax sugar way using the old switch on int methods.
-@@ -166,13 +167,22 @@ public class SwitchHelper {
+@@ -166,13 +167,22 @@ public final class SwitchHelper {
            return field.getName().startsWith("$SwitchMap") || //This is non-standard but we don't have any more information so..
              (index instanceof InvocationExprent && ((InvocationExprent) index).getName().equals("ordinal"));
          }
@@ -153,7 +156,7 @@ index fe77dd7ea6ac6c877230b0c8d4b138a5e49d60dc..5beebb2996e804ea1385841e7cd02ec5
            //Exprent init = classNode.getWrapper().getStaticFieldInitializers().getWithKey(InterpreterUtil.makeUniqueKey(field.getName(), field.getDescriptor().descriptorString));
            //Above is null because we haven't preocess the class yet?
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
-index 7a3790fb7b4e33ca86ecf5e90f9eb4a8e30145db..6e8baa9cd037f309e0188e63feb512c87fd2db85 100644
+index 7a58b3df1ea3c24d9ebd2fd7ef8d750c0b94eabc..3f6e0683d4cfd98a7714e9f6cefc306426cf2071 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
 @@ -742,14 +742,16 @@ public class InvocationExprent extends Exprent {
@@ -182,7 +185,7 @@ index 7a3790fb7b4e33ca86ecf5e90f9eb4a8e30145db..6e8baa9cd037f309e0188e63feb512c8
                  }
                }
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/sforms/FlattenStatementsHelper.java b/src/org/jetbrains/java/decompiler/modules/decompiler/sforms/FlattenStatementsHelper.java
-index bdafd77466aacfeb3499eff76052054b4856df31..858cb2d13952b90f9bcaff521b0909782c3db551 100644
+index b6754ef09179b8e7028a98248f6bff2b100b94af..3f15c35b5cec992393c52bbfaba023844cd4a94e 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/sforms/FlattenStatementsHelper.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/sforms/FlattenStatementsHelper.java
 @@ -283,7 +283,7 @@ public class FlattenStatementsHelper {
@@ -207,22 +210,3 @@ index 1b1d911df7b6767a56f543980b3adbb05f7cdb5d..0879c8c28b1661f256ca64f54807183f
      VarVersionPair new_ = this_vars.get(index);
      if (new_ != null) {
        VarVersionPair old = new VarVersionPair(var);
-diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/vars/VarProcessor.java b/src/org/jetbrains/java/decompiler/modules/decompiler/vars/VarProcessor.java
-index ec60c001a0c56aadf71b7badf0284ed656121153..633af67a2bfd241186f2fd6db8c7e4e9bf5f1094 100644
---- a/src/org/jetbrains/java/decompiler/modules/decompiler/vars/VarProcessor.java
-+++ b/src/org/jetbrains/java/decompiler/modules/decompiler/vars/VarProcessor.java
-@@ -82,8 +82,12 @@ public class VarProcessor {
-     if (varVersions == null) {
-       return null;
-     }
--
--    return varVersions.getMapOriginalVarIndices().get(index).var;
-+    VarVersionPair pair = varVersions.getMapOriginalVarIndices().get(index);
-+    if (pair == null) {
-+      return null;
-+    } else {
-+      return pair.var;
-+    }
-   }
- 
-   public void refreshVarNames(VarNamesCollector vc) {

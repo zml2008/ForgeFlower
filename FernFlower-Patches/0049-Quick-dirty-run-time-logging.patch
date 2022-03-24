@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zml <zml@stellardrift.ca>
+Date: Wed, 23 Mar 2022 21:30:37 -0700
+Subject: [PATCH] Quick & dirty run time logging
+
+
+diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
+index bd3535557b78014919d34c3ee5d17c34ea523e2d..3e939e4e5a39fce84d694a02e2e53ec486e50ba5 100644
+--- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
++++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
+@@ -25,6 +25,7 @@ import java.util.zip.ZipOutputStream;
+ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+   @SuppressWarnings("UseOfSystemOutOrSystemErr")
+   public static void main(String[] args) {
++    final long startTime = System.currentTimeMillis();
+     List<String> params = new ArrayList<String>();
+     for (int x = 0; x < args.length; x++) {
+       if (args[x].startsWith("-cfg")) {
+@@ -124,6 +125,8 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+     }
+ 
+     decompiler.decompileContext();
++    final long endTime = System.currentTimeMillis();
++    logger.writeMessage("Decompliation complete in " + (endTime - startTime) / 1000 + "s", IFernflowerLogger.Severity.WARN);
+   }
+ 
+   @SuppressWarnings("UseOfSystemOutOrSystemErr")

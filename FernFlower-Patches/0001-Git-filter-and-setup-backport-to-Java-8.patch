@@ -2442,34 +2442,3 @@ index f9553162f122c71b34635112e717c3e733b5b212..62bd9b9ccefea2b65ae41e5d9a545e20
  
  @rem Find java.exe
  if defined JAVA_HOME goto findJavaFromJavaHome
-diff --git a/src/org/jetbrains/java/decompiler/struct/consts/ConstantPool.java b/src/org/jetbrains/java/decompiler/struct/consts/ConstantPool.java
-index 3280038cb409ed7f96e99da714dc5127b74fd1ca..1dedf68f53090579fc197d85800b4f7b62d9a1e6 100644
---- a/src/org/jetbrains/java/decompiler/struct/consts/ConstantPool.java
-+++ b/src/org/jetbrains/java/decompiler/struct/consts/ConstantPool.java
-@@ -213,7 +213,12 @@ public class ConstantPool implements NewClassNameBuilder {
-     if (newName != null) {
-       StringBuilder buffer = new StringBuilder();
-       if (vt.arrayDim > 0) {
--        buffer.append("[".repeat(vt.arrayDim)).append('L').append(newName).append(';');
-+        // No functional change, just a revert for J8 compatibility
-+        for (int i = 0; i < vt.arrayDim; i++) {
-+          buffer.append('[');
-+        }
-+
-+        buffer.append('L').append(newName).append(';');
-       }
-       else {
-         buffer.append(newName);
-diff --git a/src/org/jetbrains/java/decompiler/util/SFormsFastMapDirect.java b/src/org/jetbrains/java/decompiler/util/SFormsFastMapDirect.java
-index bb8b4dd9b866ec54491da50310b09b6fcb0bdf3f..7143281598c9273e847cc8aa5d86178c3b2b6bab 100644
---- a/src/org/jetbrains/java/decompiler/util/SFormsFastMapDirect.java
-+++ b/src/org/jetbrains/java/decompiler/util/SFormsFastMapDirect.java
-@@ -342,7 +342,7 @@ public class SFormsFastMapDirect {
-         if (ent != null) {
-           final int key = i == 0 ? ikey : (i == 1 ? ikey + VarExprent.STACK_BASE : -ikey);
- 
--          list.add(new Entry<>() {
-+          list.add(new Entry<Integer, FastSparseSet<Integer>>() {
- 
-             private final Integer var = key;
-             private final FastSparseSet<Integer> val = ent;

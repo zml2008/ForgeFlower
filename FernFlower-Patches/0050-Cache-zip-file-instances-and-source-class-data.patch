@@ -1,0 +1,350 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zml <zml@stellardrift.ca>
+Date: Wed, 23 Mar 2022 21:41:32 -0700
+Subject: [PATCH] Cache zip file instances and source class data
+
+
+diff --git a/src/org/jetbrains/java/decompiler/main/Fernflower.java b/src/org/jetbrains/java/decompiler/main/Fernflower.java
+index 22cb517d3ab2901bb7d88e38802eb2825584b78d..c62bf0d68c62e0a982104172ce4f78ae4a6f233b 100644
+--- a/src/org/jetbrains/java/decompiler/main/Fernflower.java
++++ b/src/org/jetbrains/java/decompiler/main/Fernflower.java
+@@ -125,6 +125,7 @@ public class Fernflower implements IDecompiledData {
+ 
+   public void clearContext() {
+     DecompilerContext.setCurrentContext(null);
++    structContext.clear();
+   }
+ 
+   @Override
+diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
+index 3e939e4e5a39fce84d694a02e2e53ec486e50ba5..c8acfeb637ea18fb06840f696c3b444202f02d64 100644
+--- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
++++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
+@@ -8,6 +8,7 @@ import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
+ import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
+ import org.jetbrains.java.decompiler.main.extern.IResultSaver;
+ import org.jetbrains.java.decompiler.util.InterpreterUtil;
++import org.jetbrains.java.decompiler.util.ZipFileCache;
+ 
+ import java.io.*;
+ import java.nio.charset.StandardCharsets;
+@@ -148,6 +149,7 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+   private final Fernflower engine;
+   private final Map<String, ZipOutputStream> mapArchiveStreams = new HashMap<>();
+   private final Map<String, Set<String>> mapArchiveEntries = new HashMap<>();
++  private final ZipFileCache openZips = new ZipFileCache();
+ 
+   protected ConsoleDecompiler(File destination, Map<String, Object> options, IFernflowerLogger logger) {
+     root = destination;
+@@ -199,16 +201,15 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+ 
+   @Override
+   public byte[] getBytecode(String externalPath, String internalPath) throws IOException {
+-    File file = new File(externalPath);
+     if (internalPath == null) {
++      File file = new File(externalPath);
+       return InterpreterUtil.getBytes(file);
+     }
+     else {
+-      try (ZipFile archive = new ZipFile(file)) {
+-        ZipEntry entry = archive.getEntry(internalPath);
+-        if (entry == null) throw new IOException("Entry not found: " + internalPath);
+-        return InterpreterUtil.getBytes(archive, entry);
+-      }
++      final ZipFile archive = this.openZips.get(externalPath);
++      ZipEntry entry = archive.getEntry(internalPath);
++      if (entry == null) throw new IOException("Entry not found: " + internalPath);
++      return InterpreterUtil.getBytes(archive, entry);
+     }
+   }
+ 
+@@ -279,7 +280,8 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+       return;
+     }
+ 
+-    try (ZipFile srcArchive = new ZipFile(new File(source))) {
++    try {
++      ZipFile srcArchive = this.openZips.get(source);
+       ZipEntry entry = srcArchive.getEntry(entryName);
+       if (entry != null) {
+         try (InputStream in = srcArchive.getInputStream(entry)) {
+@@ -346,4 +348,9 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+       DecompilerContext.getLogger().writeMessage("Cannot close " + file, IFernflowerLogger.Severity.WARN);
+     }
+   }
++
++  @Override
++  public void close() throws IOException {
++    this.openZips.close();
++  }
+ }
+diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/SingleFileSaver.java b/src/org/jetbrains/java/decompiler/main/decompiler/SingleFileSaver.java
+index 8e37643c54c6e961c317d9bc2c1ed5556e0b4179..d12e1a684a58f43194776b61d1238c9c863262b4 100644
+--- a/src/org/jetbrains/java/decompiler/main/decompiler/SingleFileSaver.java
++++ b/src/org/jetbrains/java/decompiler/main/decompiler/SingleFileSaver.java
+@@ -17,11 +17,13 @@ import org.jetbrains.java.decompiler.main.DecompilerContext;
+ import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
+ import org.jetbrains.java.decompiler.main.extern.IResultSaver;
+ import org.jetbrains.java.decompiler.util.InterpreterUtil;
++import org.jetbrains.java.decompiler.util.ZipFileCache;
+ 
+ public class SingleFileSaver implements IResultSaver {
+   private final File target;
+   private ZipOutputStream output;
+   private Set<String> entries = new HashSet<>();
++  private final ZipFileCache openZips = new ZipFileCache();
+ 
+   public SingleFileSaver(File target) {
+     this.target = target;
+@@ -65,7 +67,8 @@ public class SingleFileSaver implements IResultSaver {
+     if (!checkEntry(entryName))
+       return;
+ 
+-    try (ZipFile srcArchive = new ZipFile(new File(source))) {
++    try {
++      final ZipFile srcArchive = this.openZips.get(source);
+       ZipEntry entry = srcArchive.getEntry(entryName);
+       if (entry != null) {
+         try (InputStream in = srcArchive.getInputStream(entry)) {
+@@ -115,6 +118,11 @@ public class SingleFileSaver implements IResultSaver {
+     }
+   }
+ 
++  @Override
++  public void close() throws IOException {
++    this.openZips.close();
++  }
++
+   private boolean checkEntry(String entryName) {
+     boolean added = entries.add(entryName);
+     if (!added) {
+diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ThreadSafeResultSaver.java b/src/org/jetbrains/java/decompiler/main/decompiler/ThreadSafeResultSaver.java
+index 585494c81bda9c2bde5ea284fb8851df3c1b072b..565949b9782abfbb9303e86b59cca0986a9149df 100644
+--- a/src/org/jetbrains/java/decompiler/main/decompiler/ThreadSafeResultSaver.java
++++ b/src/org/jetbrains/java/decompiler/main/decompiler/ThreadSafeResultSaver.java
+@@ -5,13 +5,14 @@ import org.jetbrains.java.decompiler.main.DecompilerContext;
+ import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
+ import org.jetbrains.java.decompiler.main.extern.IResultSaver;
+ import org.jetbrains.java.decompiler.util.InterpreterUtil;
++import org.jetbrains.java.decompiler.util.ZipFileCache;
+ 
+ import java.io.*;
+ import java.nio.charset.StandardCharsets;
+-import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.Map;
+ import java.util.Set;
++import java.util.concurrent.ConcurrentHashMap;
+ import java.util.concurrent.ExecutionException;
+ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.Executors;
+@@ -27,11 +28,11 @@ import java.util.zip.ZipOutputStream;
+  */
+ //TODO, Split off default impl inside ConsoleDecompiler and make this extend that.
+ public class ThreadSafeResultSaver implements IResultSaver {
+-
+-  private final Map<String, ArchiveContext> archiveContexts = new HashMap<>();
++  private final Map<String, ArchiveContext> archiveContexts = new ConcurrentHashMap<>();
+   private final File target;
+   private final boolean archiveMode;//Latch for Archive mode.
+   private ArchiveContext singeArchiveCtx;
++  private final ZipFileCache sources = new ZipFileCache();
+ 
+   public ThreadSafeResultSaver(File target) {
+     this.target = target;
+@@ -88,7 +89,8 @@ public class ThreadSafeResultSaver implements IResultSaver {
+       if (!ctx.addEntry(entryName)) {
+         return;
+       }
+-      try (ZipFile srcArchive = new ZipFile(new File(source))) {
++      try {
++        final ZipFile srcArchive = this.sources.get(source);
+         ZipEntry entry = srcArchive.getEntry(entryName);
+         if (entry != null) {
+           try (InputStream in = srcArchive.getInputStream(entry)) {
+@@ -204,6 +206,20 @@ public class ThreadSafeResultSaver implements IResultSaver {
+     }
+   }
+ 
++  @Override
++  public void close() throws IOException {
++    if (!this.archiveContexts.isEmpty()) {
++      for (final Map.Entry<String, ArchiveContext> entry : this.archiveContexts.entrySet()) {
++        DecompilerContext.getLogger().writeMessage("Unclosed archive detected at end of run in " + entry.getKey(), IFernflowerLogger.Severity.ERROR);
++        entry.getValue().executor.shutdown();
++        entry.getValue().stream.close();
++      }
++      this.archiveContexts.clear();
++    }
++
++    this.sources.close();
++  }
++
+   private String getAbsolutePath(String path) {
+     return new File(target, path).getAbsolutePath();
+   }
+diff --git a/src/org/jetbrains/java/decompiler/main/extern/IResultSaver.java b/src/org/jetbrains/java/decompiler/main/extern/IResultSaver.java
+index e16c60301264feaeaabfaf281495807d888456db..eb2d5a7a09acca7a0fc101c6d31c364867ea2eb8 100644
+--- a/src/org/jetbrains/java/decompiler/main/extern/IResultSaver.java
++++ b/src/org/jetbrains/java/decompiler/main/extern/IResultSaver.java
+@@ -1,11 +1,12 @@
+ // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+ package org.jetbrains.java.decompiler.main.extern;
+ 
++import java.io.IOException;
+ import java.nio.ByteBuffer;
+ import java.nio.ByteOrder;
+ import java.util.jar.Manifest;
+ 
+-public interface IResultSaver {
++public interface IResultSaver extends AutoCloseable {
+   void saveFolder(String path);
+ 
+   void copyFile(String source, String path, String entryName);
+@@ -28,6 +29,9 @@ public interface IResultSaver {
+   }
+ 
+   void closeArchive(String path, String archiveName);
++  
++  @Override
++  default void close() throws IOException {}
+ 
+   default byte[] getCodeLineData(int[] mappings) {
+     if (mappings == null || mappings.length == 0) {
+diff --git a/src/org/jetbrains/java/decompiler/struct/ContextUnit.java b/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
+index 5e119e5030efab2bccc1bd96601075c081056339..920932069cc12c2d55842559ba0060be3f227262 100644
+--- a/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
++++ b/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
+@@ -189,12 +189,9 @@ public class ContextUnit {
+           }
+ 
+           //Ask the executor to shutdown
+-          executor.shutdown();
+           waitForAll(futures);
+           futures.clear();
+ 
+-          executor = Executors.newFixedThreadPool(threads);
+-
+           // classes
+           for (ClassContext clCtx : toProcess) {
+             if (clCtx.shouldContinue) {
+diff --git a/src/org/jetbrains/java/decompiler/struct/StructContext.java b/src/org/jetbrains/java/decompiler/struct/StructContext.java
+index 5aa59c4d71dc73bbc8875879ac4c90ab030d6920..a3cec5d4e0097c95d596c924e49fe21b6423ef20 100644
+--- a/src/org/jetbrains/java/decompiler/struct/StructContext.java
++++ b/src/org/jetbrains/java/decompiler/struct/StructContext.java
+@@ -3,6 +3,7 @@ package org.jetbrains.java.decompiler.struct;
+ 
+ import org.jetbrains.java.decompiler.main.DecompilerContext;
+ import org.jetbrains.java.decompiler.main.extern.IResultSaver;
++import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
+ import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger.Severity;
+ import org.jetbrains.java.decompiler.struct.gen.generics.GenericMain;
+ import org.jetbrains.java.decompiler.struct.gen.generics.GenericMethodDescriptor;
+@@ -153,7 +154,7 @@ public class StructContext {
+             StructClass cl = StructClass.create(new DataInputFullStream(bytes), isOwn, loader);
+             classes.put(cl.qualifiedName, cl);
+             unit.addClass(cl, name);
+-            loader.addClassLink(cl.qualifiedName, new LazyLoader.Link(file.getAbsolutePath(), name));
++            loader.addClassLink(cl.qualifiedName, new LazyLoader.Link(file.getAbsolutePath(), name, bytes));
+           }
+           else {
+             unit.addOtherEntry(file.getAbsolutePath(), name);
+@@ -246,4 +247,13 @@ public class StructContext {
+     List<String> params = this.abstractNames.get(className + ' ' + methodName + ' ' + descriptor);
+     return params != null && index < params.size() ? params.get(index) : _default;
+   }
++
++  public void clear() {
++    try {
++      this.saver.close();
++    } catch (final IOException ex) {
++      DecompilerContext.getLogger().writeMessage("Failed to close out result saver", IFernflowerLogger.Severity.ERROR, ex);
++    }
++  }
++
+ }
+diff --git a/src/org/jetbrains/java/decompiler/util/ZipFileCache.java b/src/org/jetbrains/java/decompiler/util/ZipFileCache.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..92ebb33e213d4a9da802284f77df25b0cebbfa4f
+--- /dev/null
++++ b/src/org/jetbrains/java/decompiler/util/ZipFileCache.java
+@@ -0,0 +1,43 @@
++package org.jetbrains.java.decompiler.util;
++
++import java.io.File;
++import java.io.IOException;
++import java.io.UncheckedIOException;
++import java.util.Map;
++import java.util.concurrent.ConcurrentHashMap;
++import java.util.zip.ZipFile;
++
++public final class ZipFileCache implements AutoCloseable {
++  private final Map<String, ZipFile> files = new ConcurrentHashMap<>();
++
++  public ZipFile get(final String path) throws IOException {
++    try {
++      return this.files.computeIfAbsent(path, pth -> {
++        try {
++          return new ZipFile(new File(pth));
++        } catch (final IOException ex) {
++          throw new UncheckedIOException(ex);
++        }
++      });
++    } catch (final UncheckedIOException ex) {
++      throw ex.getCause();
++    }
++  }
++
++  @Override
++  public void close() throws IOException {
++    IOException failure = null;
++    for (final Map.Entry<String, ZipFile> entry : this.files.entrySet()) {
++      try {
++        entry.getValue().close();
++      } catch (final IOException ex) {
++        if (failure == null) {
++          failure = ex;
++        } else {
++          failure.addSuppressed(ex);
++        }
++      }
++    }
++    this.files.clear();
++  }
++}
+diff --git a/test/org/jetbrains/java/decompiler/DecompilerTestFixture.java b/test/org/jetbrains/java/decompiler/DecompilerTestFixture.java
+index 7d29c198014cbfee8092fd31461208ce58e7f775..9648d9dcb68376e43611ef659572ec361e235c9c 100644
+--- a/test/org/jetbrains/java/decompiler/DecompilerTestFixture.java
++++ b/test/org/jetbrains/java/decompiler/DecompilerTestFixture.java
+@@ -60,7 +60,7 @@ public class DecompilerTestFixture {
+     if (tempDir != null && cleanup) {
+       delete(tempDir);
+     }
+-    decompiler.close();
++    decompiler.clear();
+   }
+ 
+   public File getTestDataDir() {
+@@ -78,11 +78,11 @@ public class DecompilerTestFixture {
+   public ConsoleDecompiler getDecompiler() {
+     return decompiler;
+   }
+-  
++
+   public void setCleanup(boolean value) {
+     this.cleanup = value;
+   }
+-  
++
+   public boolean getCleanup() {
+     return cleanup;
+   }
+@@ -149,7 +149,7 @@ public class DecompilerTestFixture {
+       }
+     }
+ 
+-    void close() {
++    void clear() {
+       for (ZipFile file : zipFiles.values()) {
+         try {
+           file.close();

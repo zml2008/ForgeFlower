@@ -67,10 +67,18 @@ index 8bbe04c2f404b6c43a6a216bf2a99d3b69a2ad93..34d45dae475676add94842007edecd88
  
    // *****************************************************************************
 diff --git a/src/org/jetbrains/java/decompiler/main/Fernflower.java b/src/org/jetbrains/java/decompiler/main/Fernflower.java
-index c62bf0d68c62e0a982104172ce4f78ae4a6f233b..a9cb134d0e7907472b1abde8dd4fcbe4383dc4cc 100644
+index c62bf0d68c62e0a982104172ce4f78ae4a6f233b..b1e237d2b6b79ebcb2c0e30061b1d313e1aff653 100644
 --- a/src/org/jetbrains/java/decompiler/main/Fernflower.java
 +++ b/src/org/jetbrains/java/decompiler/main/Fernflower.java
-@@ -25,10 +25,20 @@ public class Fernflower implements IDecompiledData {
+@@ -9,7 +9,6 @@ import org.jetbrains.java.decompiler.modules.renamer.PoolInterceptor;
+ import org.jetbrains.java.decompiler.struct.IDecompiledData;
+ import org.jetbrains.java.decompiler.struct.StructClass;
+ import org.jetbrains.java.decompiler.struct.StructContext;
+-import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
+ import org.jetbrains.java.decompiler.util.JADNameProvider;
+ import org.jetbrains.java.decompiler.util.TextBuffer;
+ import org.jetbrains.java.decompiler.util.ClasspathScanner;
+@@ -25,10 +24,20 @@ public class Fernflower implements IDecompiledData {
    private final IIdentifierRenamer helper;
    private final IdentifierConverter converter;
  
@@ -91,7 +99,7 @@ index c62bf0d68c62e0a982104172ce4f78ae4a6f233b..a9cb134d0e7907472b1abde8dd4fcbe4
    public Fernflower(IBytecodeProvider provider, IResultSaver saver, Map<String, Object> customProperties, IFernflowerLogger logger, int threads) {
      Map<String, Object> properties = new HashMap<>(IFernflowerPreferences.DEFAULTS);
      if (customProperties != null) {
-@@ -43,7 +53,7 @@ public class Fernflower implements IDecompiledData {
+@@ -43,7 +52,7 @@ public class Fernflower implements IDecompiledData {
        catch (IllegalArgumentException ignore) { }
      }
  
@@ -100,7 +108,7 @@ index c62bf0d68c62e0a982104172ce4f78ae4a6f233b..a9cb134d0e7907472b1abde8dd4fcbe4
      classProcessor = new ClassesProcessor(structContext);
  
      PoolInterceptor interceptor = null;
-@@ -105,10 +115,18 @@ public class Fernflower implements IDecompiledData {
+@@ -105,10 +114,18 @@ public class Fernflower implements IDecompiledData {
      structContext.addSpace(source, true);
    }
  
@@ -119,7 +127,7 @@ index c62bf0d68c62e0a982104172ce4f78ae4a6f233b..a9cb134d0e7907472b1abde8dd4fcbe4
    public void decompileContext() {
      if (converter != null) {
        converter.rename();
-@@ -124,8 +142,8 @@ public class Fernflower implements IDecompiledData {
+@@ -124,8 +141,8 @@ public class Fernflower implements IDecompiledData {
    }
  
    public void clearContext() {
@@ -129,7 +137,7 @@ index c62bf0d68c62e0a982104172ce4f78ae4a6f233b..a9cb134d0e7907472b1abde8dd4fcbe4
    }
  
    @Override
-@@ -139,7 +157,12 @@ public class Fernflower implements IDecompiledData {
+@@ -139,7 +156,12 @@ public class Fernflower implements IDecompiledData {
        return entryName.substring(0, entryName.lastIndexOf('/') + 1) + simpleClassName + ".java";
      }
      else {
@@ -218,18 +226,19 @@ index 7837939efab2b1caf023dc2f5b0a52659ce032bd..eb837996028dd156e8e79435118aa9dd
      engine.addSource(source);
    }
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
-index c8acfeb637ea18fb06840f696c3b444202f02d64..dc4add483574d784823eb8e8245ffc24b7fd51e5 100644
+index c8acfeb637ea18fb06840f696c3b444202f02d64..0397af8fd1d3f547c59483b7899c0a7d327ab94d 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
-@@ -4,6 +4,7 @@ package org.jetbrains.java.decompiler.main.decompiler;
+@@ -3,7 +3,7 @@ package org.jetbrains.java.decompiler.main.decompiler;
+ 
  import org.jetbrains.java.decompiler.main.DecompilerContext;
  import org.jetbrains.java.decompiler.main.Fernflower;
- import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
+-import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
 +import org.jetbrains.java.decompiler.main.extern.IContextSource;
  import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
  import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
  import org.jetbrains.java.decompiler.main.extern.IResultSaver;
-@@ -23,7 +24,7 @@ import java.util.zip.ZipEntry;
+@@ -23,7 +23,7 @@ import java.util.zip.ZipEntry;
  import java.util.zip.ZipFile;
  import java.util.zip.ZipOutputStream;
  
@@ -238,7 +247,7 @@ index c8acfeb637ea18fb06840f696c3b444202f02d64..dc4add483574d784823eb8e8245ffc24
    @SuppressWarnings("UseOfSystemOutOrSystemErr")
    public static void main(String[] args) {
      final long startTime = System.currentTimeMillis();
-@@ -171,17 +172,25 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+@@ -171,17 +171,25 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
        saver = new ThreadSafeResultSaver(root);
      }
  
@@ -265,7 +274,7 @@ index c8acfeb637ea18fb06840f696c3b444202f02d64..dc4add483574d784823eb8e8245ffc24
    public void addWhitelist(String prefix) {
      engine.addWhitelist(prefix);
    }
-@@ -199,8 +208,8 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+@@ -199,8 +207,8 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
    // Interface IBytecodeProvider
    // *******************************************************************
  
@@ -314,12 +323,14 @@ index ac72d7c6b33c7808f1d1a6b3ef6945abb8012ae5..7a06c6d5e53b5015ad12622e1b734526
  }
 diff --git a/src/org/jetbrains/java/decompiler/main/extern/IContextSource.java b/src/org/jetbrains/java/decompiler/main/extern/IContextSource.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c467b8935026fe705bb46c8f17c4bd94a884421d
+index 0000000000000000000000000000000000000000..2eb79203495bf48aa2693c0a2e4455fab43f217b
 --- /dev/null
 +++ b/src/org/jetbrains/java/decompiler/main/extern/IContextSource.java
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,206 @@
 +// Copyright 2000-2022 JetBrains s.r.o. and ForgeFlower contributors Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 +package org.jetbrains.java.decompiler.main.extern;
++
++import static java.util.Objects.requireNonNull;
 +
 +import java.io.IOException;
 +import java.io.InputStream;
@@ -365,6 +376,19 @@ index 0000000000000000000000000000000000000000..c467b8935026fe705bb46c8f17c4bd94
 +    try (is) {
 +      return is.readAllBytes();
 +    }
++  }
++
++  /**
++   * Get an input stream for a specific resource.
++   *
++   * This will return {@code null} if a directory is requested.
++   *
++   * @param resource the resource to request
++   * @return an input stream
++   * @throws IOException if an input stream could not be opened
++   */
++  default InputStream getInputStream(final Entry resource) throws IOException {
++    return this.getInputStream(resource.path());
 +  }
 +
 +  /**
@@ -435,10 +459,10 @@ index 0000000000000000000000000000000000000000..c467b8935026fe705bb46c8f17c4bd94
 +   * @param others other entries
 +   * @param childContexts contexts discovered within this context
 +   */
-+  record Entries(List<String> classes, List<String> directories, List<String> others, List<IContextSource> childContexts) {
++  record Entries(List<Entry> classes, List<String> directories, List<Entry> others, List<IContextSource> childContexts) {
 +    public static final Entries EMPTY = new Entries(List.of(), List.of(), List.of(), List.of());
 +
-+    public Entries(List<String> classes, List<String> directories, List<String> others) {
++    public Entries(List<Entry> classes, List<String> directories, List<Entry> others) {
 +      this(classes, directories, others, List.of());
 +    }
 +
@@ -448,6 +472,64 @@ index 0000000000000000000000000000000000000000..c467b8935026fe705bb46c8f17c4bd94
 +      directories = List.copyOf(directories);
 +      others = List.copyOf(others);
 +      childContexts = List.copyOf(childContexts);
++    }
++  }
++
++  /**
++   * An entry in a context unit, which may be a multirelease variant.
++   *
++   * @param basePath the path of the entry, with any multirelease variant stripped
++   * @param multirelease the multirelease target version, or {@value #BASE_VERSION} to indicate this entry is not part of a multirelease variant
++   */
++  record Entry(String basePath, int multirelease) {
++    public static final int BASE_VERSION = -1;
++    private static final String MULTIRELEASE_PREFIX = "META-INF/versions/";
++
++    /**
++     * Parse an entry from a raw jar path.
++     *
++     * @param path the path to parse
++     * @return an entry, which may indicate a multirelease resource
++     */
++    public static Entry parse(final String path) {
++      if (path.startsWith(MULTIRELEASE_PREFIX)) {
++        final int nextSlash = path.indexOf('/', MULTIRELEASE_PREFIX.length());
++        if (nextSlash == -1) return new Entry(path, BASE_VERSION);
++
++        final String version = path.substring(MULTIRELEASE_PREFIX.length(), nextSlash);
++        try {
++          return new Entry(path.substring(nextSlash), Integer.parseInt(version));
++        } catch (final NumberFormatException ex) {
++          // unversioned
++        }
++      }
++
++      return new Entry(path, BASE_VERSION);
++    }
++
++    /**
++     * Create an entry at the base version, without attempting to parse any multirelease information.
++     *
++     * @param path the path to test
++     * @return a new entry
++     */
++    public static Entry atBase(final String path) {
++      return new Entry(path, BASE_VERSION);
++    }
++
++    public Entry {
++      requireNonNull(basePath, "basePath");
++      if (multirelease != -1 && multirelease < 9) {
++        throw new IllegalArgumentException("A multirelease variant must target a Java runtime >= 9");
++      }
++    }
++
++    public String path() {
++      if (this.multirelease == BASE_VERSION) {
++        return this.basePath();
++      } else {
++        return MULTIRELEASE_PREFIX + Integer.toString(this.multirelease) + '/' + this.basePath;
++      }
 +    }
 +  }
 +}
@@ -537,7 +619,7 @@ index ba09aa17789940419bb4bf45bd1aaddda9189ca5..b72485100b9b25b1fe27966cc7b8b553
                stack.add(clParent);
                stackSubNodes.add(node);
 diff --git a/src/org/jetbrains/java/decompiler/struct/ContextUnit.java b/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
-index 920932069cc12c2d55842559ba0060be3f227262..bb8f5d93e593782d649a0fa34d1dcec2c7d12847 100644
+index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7e287a800 100644
 --- a/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
 +++ b/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
 @@ -2,15 +2,13 @@
@@ -559,7 +641,7 @@ index 920932069cc12c2d55842559ba0060be3f227262..bb8f5d93e593782d649a0fa34d1dcec2
  import java.nio.charset.StandardCharsets;
  import java.util.ArrayList;
  import java.util.List;
-@@ -18,218 +16,183 @@ import java.util.concurrent.ExecutionException;
+@@ -18,218 +16,187 @@ import java.util.concurrent.ExecutionException;
  import java.util.concurrent.ExecutorService;
  import java.util.concurrent.Executors;
  import java.util.concurrent.Future;
@@ -592,7 +674,7 @@ index 920932069cc12c2d55842559ba0060be3f227262..bb8f5d93e593782d649a0fa34d1dcec2
 +  private volatile boolean entriesInitialized;
 +  private List<String> classEntries = List.of();  // class file or jar/zip entry
 +  private List<String> dirEntries = List.of();
-+  private List<String> otherEntries = List.of();
++  private List<IContextSource.Entry> otherEntries = List.of();
 +  private List<IContextSource> childContexts = List.of();
  
 -  private List<StructClass> classes = new ArrayList<>();
@@ -631,12 +713,16 @@ index 920932069cc12c2d55842559ba0060be3f227262..bb8f5d93e593782d649a0fa34d1dcec2
 +      synchronized (this) {
 +        if (!this.entriesInitialized) {
 +          final IContextSource.Entries entries = this.source.getEntries();
-+          this.classEntries = entries.classes();
++          // TODO: more proper handling of multirelease jars, rather than just stripping them
++          this.classEntries = entries.classes().stream()
++            .filter(ent -> ent.multirelease() == IContextSource.Entry.BASE_VERSION)
++            .map(entry -> entry.basePath())
++            .toList();
 +          this.dirEntries = entries.directories();
 +          boolean includeExtras = !DecompilerContext.getOption(IFernflowerPreferences.SKIP_EXTRA_FILES);
 +          this.otherEntries = new ArrayList<>();
-+          for (final String entry : entries.others()) {
-+            if ("fernflower_abstract_parameter_names.txt".equals(entry)) {
++          for (final IContextSource.Entry entry : entries.others()) {
++            if ("fernflower_abstract_parameter_names.txt".equals(entry.basePath())) {
 +              try (final InputStream is = this.source.getInputStream(entry)) {
 +                final byte[] data = is.readAllBytes();
 +                DecompilerContext.getStructContext().loadAbstractMetadata(new String(data, StandardCharsets.UTF_8));
@@ -730,7 +816,7 @@ index 920932069cc12c2d55842559ba0060be3f227262..bb8f5d93e593782d649a0fa34d1dcec2
 +  }
  
 -        break;
-+  public List<String> getOtherEntries() {
++  public List<IContextSource.Entry> getOtherEntries() {
 +    this.initEntries();
 +    return this.otherEntries;
 +  }
@@ -806,8 +892,8 @@ index 920932069cc12c2d55842559ba0060be3f227262..bb8f5d93e593782d649a0fa34d1dcec2
 -            }));
 -          }
 +    // non-class entries
-+    for (String otherEntry : otherEntries) {
-+      sink.acceptOther(otherEntry);
++    for (IContextSource.Entry otherEntry : otherEntries) {
++      sink.acceptOther(otherEntry.path());
 +    }
  
 -          //Ask the executor to shutdown
@@ -916,7 +1002,7 @@ index 920932069cc12c2d55842559ba0060be3f227262..bb8f5d93e593782d649a0fa34d1dcec2
  
    private static void waitForAll(List<Future<?>> futures) {
      for (Future<?> future : futures) {
-@@ -241,16 +204,19 @@ public class ContextUnit {
+@@ -241,16 +208,19 @@ public class ContextUnit {
      }
    }
  
@@ -944,7 +1030,7 @@ index 920932069cc12c2d55842559ba0060be3f227262..bb8f5d93e593782d649a0fa34d1dcec2
    private static class ClassContext {
 diff --git a/src/org/jetbrains/java/decompiler/struct/DirectoryContextSource.java b/src/org/jetbrains/java/decompiler/struct/DirectoryContextSource.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3acf35d9d21e2dd266a4fb7e7fd3b48c68e53f75
+index 0000000000000000000000000000000000000000..dbb6cc4d224fbb5ebbfc8156e8bea18e90b609af
 --- /dev/null
 +++ b/src/org/jetbrains/java/decompiler/struct/DirectoryContextSource.java
 @@ -0,0 +1,125 @@
@@ -984,9 +1070,9 @@ index 0000000000000000000000000000000000000000..3acf35d9d21e2dd266a4fb7e7fd3b48c
 +
 +  @Override
 +  public Entries getEntries() {
-+    final List<String> classes = new ArrayList<>();
++    final List<Entry> classes = new ArrayList<>();
 +    final List<String> directories = new ArrayList<>();
-+    final List<String> others = new ArrayList<>();
++    final List<Entry> others = new ArrayList<>();
 +    final List<IContextSource> jarChildren = new ArrayList<>();
 +    this.collectEntries(this.baseDirectory.getAbsolutePath(), this.baseDirectory, classes, directories, others, jarChildren);
 +    return new Entries(classes, directories, others, jarChildren);
@@ -995,9 +1081,9 @@ index 0000000000000000000000000000000000000000..3acf35d9d21e2dd266a4fb7e7fd3b48c
 +  void collectEntries(
 +    final String base,
 +    final File current,
-+    final List<String> classes,
++    final List<Entry> classes,
 +    final List<String> directories,
-+    final List<String> others,
++    final List<Entry> others,
 +    final List<IContextSource> jarChildren
 +  ) {
 +    final String relativePath = current.getAbsolutePath().substring(base.length());
@@ -1025,8 +1111,8 @@ index 0000000000000000000000000000000000000000..3acf35d9d21e2dd266a4fb7e7fd3b48c
 +    }
 +  }
 +
-+  private String sanitize(final String path) {
-+    return path.replace(File.separatorChar, '/');
++  private Entry sanitize(final String path) {
++    return Entry.atBase(path.replace(File.separatorChar, '/'));
 +  }
 +
 +  @Override
@@ -1075,7 +1161,7 @@ index 0000000000000000000000000000000000000000..3acf35d9d21e2dd266a4fb7e7fd3b48c
 +}
 diff --git a/src/org/jetbrains/java/decompiler/struct/JarContextSource.java b/src/org/jetbrains/java/decompiler/struct/JarContextSource.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3a106444bbadf267e707d6b40c4e32bc5eda5d1b
+index 0000000000000000000000000000000000000000..56127f683eca1fe1d28624eada88bf578c243e6e
 --- /dev/null
 +++ b/src/org/jetbrains/java/decompiler/struct/JarContextSource.java
 @@ -0,0 +1,135 @@
@@ -1132,9 +1218,9 @@ index 0000000000000000000000000000000000000000..3a106444bbadf267e707d6b40c4e32bc
 +
 +  @Override
 +  public Entries getEntries() {
-+    final List<String> classes = new ArrayList<>();
++    final List<Entry> classes = new ArrayList<>();
 +    final List<String> directories = new ArrayList<>();
-+    final List<String> others = new ArrayList<>();
++    final List<Entry> others = new ArrayList<>();
 +
 +    Enumeration<? extends ZipEntry> entries = this.file.entries();
 +    while (entries.hasMoreElements()) {
@@ -1143,10 +1229,10 @@ index 0000000000000000000000000000000000000000..3a106444bbadf267e707d6b40c4e32bc
 +      String name = entry.getName();
 +      if (!entry.isDirectory()) {
 +        if (name.endsWith(CLASS_SUFFIX)) {
-+          classes.add(name.substring(0, name.length() - CLASS_SUFFIX.length()));
++          classes.add(Entry.parse(name.substring(0, name.length() - CLASS_SUFFIX.length())));
 +        }
 +        else if (!this.isJar || !name.equalsIgnoreCase(MANIFEST)) {
-+          others.add(name);
++          others.add(Entry.parse(name));
 +        }
 +      }
 +      else {
@@ -1216,7 +1302,7 @@ index 0000000000000000000000000000000000000000..3a106444bbadf267e707d6b40c4e32bc
 +}
 diff --git a/src/org/jetbrains/java/decompiler/struct/SingleFileContextSource.java b/src/org/jetbrains/java/decompiler/struct/SingleFileContextSource.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..a86d0de9a9ac81266d960ea86b73428587d632ec
+index 0000000000000000000000000000000000000000..acbcfdf78bb40f0643a828b89e1cf482b75aaa70
 --- /dev/null
 +++ b/src/org/jetbrains/java/decompiler/struct/SingleFileContextSource.java
 @@ -0,0 +1,91 @@
@@ -1270,9 +1356,9 @@ index 0000000000000000000000000000000000000000..a86d0de9a9ac81266d960ea86b734285
 +    if (!this.file.exists()) {
 +      return Entries.EMPTY;
 +    } else if (this.file.getName().endsWith(CLASS_SUFFIX)) {
-+      return new Entries(List.of(this.qualifiedName), List.of(), List.of());
++      return new Entries(List.of(Entry.atBase(this.qualifiedName)), List.of(), List.of());
 +    } else {
-+      return new Entries(List.of(), List.of(), List.of(this.file.getName()));
++      return new Entries(List.of(), List.of(), List.of(Entry.atBase(this.file.getName())));
 +    }
 +  }
 +
@@ -1411,10 +1497,10 @@ index b7bd346863cd2e56c513b60dcb3c2923f2d7813a..fb3aaad2362131cfb39ebd5963a5de7f
      return (majorVersion > CodeConstants.BYTECODE_JAVA_LE_4 ||
              (majorVersion == CodeConstants.BYTECODE_JAVA_LE_4 && minorVersion > 0)); // FIXME: check second condition
 diff --git a/src/org/jetbrains/java/decompiler/struct/StructContext.java b/src/org/jetbrains/java/decompiler/struct/StructContext.java
-index a3cec5d4e0097c95d596c924e49fe21b6423ef20..4d12c4d6c1fb940e0bfe6167beefa4c155586e62 100644
+index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af533729715fe8679 100644
 --- a/src/org/jetbrains/java/decompiler/struct/StructContext.java
 +++ b/src/org/jetbrains/java/decompiler/struct/StructContext.java
-@@ -3,185 +3,177 @@ package org.jetbrains.java.decompiler.struct;
+@@ -3,185 +3,182 @@ package org.jetbrains.java.decompiler.struct;
  
  import org.jetbrains.java.decompiler.main.DecompilerContext;
  import org.jetbrains.java.decompiler.main.extern.IResultSaver;
@@ -1588,6 +1674,10 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..4d12c4d6c1fb940e0bfe6167beefa4c1
 -        if (filename.endsWith(".jar")) {
 -          isArchive = true;
 -          addArchive(path, file, ContextUnit.TYPE_JAR, isOwn);
+-        }
+-        else if (filename.endsWith(".zip")) {
+-          isArchive = true;
+-          addArchive(path, file, ContextUnit.TYPE_ZIP, isOwn);
 +      addSpace(new DirectoryContextSource(this.legacyProvider, file), isOwn);
 +    } else if (file.isFile()) {
 +      final String name = file.getName();
@@ -1600,18 +1690,7 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..4d12c4d6c1fb940e0bfe6167beefa4c1
 +          DecompilerContext.getLogger().writeMessage(message, IFernflowerLogger.Severity.ERROR, ex);
 +          throw new UncheckedIOException(message, ex);
          }
--        else if (filename.endsWith(".zip")) {
--          isArchive = true;
--          addArchive(path, file, ContextUnit.TYPE_ZIP, isOwn);
-+      } else {
-+        try {
-+          addSpace(new SingleFileContextSource(this.legacyProvider, file), isOwn);
-+        } catch (final IOException ex) {
-+          final String message = "Invalid file " + file;
-+          DecompilerContext.getLogger().writeMessage(message, IFernflowerLogger.Severity.ERROR, ex);
-+          throw new UncheckedIOException(message, ex);
-         }
-       }
+-      }
 -      catch (IOException ex) {
 -        String message = "Corrupted archive file: " + file;
 -        DecompilerContext.getLogger().writeMessage(message, ex);
@@ -1638,8 +1717,15 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..4d12c4d6c1fb940e0bfe6167beefa4c1
 -          String message = "Corrupted class file: " + file;
 -          DecompilerContext.getLogger().writeMessage(message, ex);
 -          throw new RuntimeException(ex);
--        }
--      }
++      } else {
++        try {
++          addSpace(new SingleFileContextSource(this.legacyProvider, file), isOwn);
++        } catch (final IOException ex) {
++          final String message = "Invalid file " + file;
++          DecompilerContext.getLogger().writeMessage(message, IFernflowerLogger.Severity.ERROR, ex);
++          throw new UncheckedIOException(message, ex);
+         }
+       }
 -      else {
 -        unit.addOtherEntry(file.getAbsolutePath(), filename);
 -      }
@@ -1695,24 +1781,29 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..4d12c4d6c1fb940e0bfe6167beefa4c1
 -        if (unit == null) {
 -          unit = new ContextUnit(ContextUnit.TYPE_FOLDER, path, cls, isOwn, saver, decompiledData);
 -          units.put(path, unit);
+-        }
 +  private void initUnit(final ContextUnit unit) {
 +    DecompilerContext.getLogger().writeMessage("Scanning classes from " + unit.getName(), IFernflowerLogger.Severity.INFO);
 +    boolean isOwn = unit.isOwn();
 +    for (final String clazz : unit.getClassNames()) {
-+      if (this.unitsByClassName.putIfAbsent(clazz, unit) == null) {
-+        DecompilerContext.getLogger().writeMessage("    " + clazz, IFernflowerLogger.Severity.TRACE);
-+        if (isOwn) { // pre-load classes
-+          this.getClass(clazz);
-         }
-+      }
-+    }
++      final ContextUnit existing = this.unitsByClassName.putIfAbsent(clazz, unit);
++      if (existing != null) {
++        if (!isOwn || existing.isOwn()) continue;
  
 -        StructClass cl = StructClass.create(new DataInputFullStream(data), isOwn, loader);
 -        classes.put(cl.qualifiedName, cl);
 -        unit.addClass(cl, cls);
 -        loader.addClassLink(cl.qualifiedName, new LazyLoader.Link(path, cls, data));
 -  }
--
++        if (!this.unitsByClassName.replace(clazz, existing, unit)) continue;
++      }
++
++      DecompilerContext.getLogger().writeMessage("    " + clazz, IFernflowerLogger.Severity.TRACE);
++      if (isOwn) { // pre-load classes
++        this.getClass(clazz);
++      }
++    }
+ 
 -  public Map<String, StructClass> getClasses() {
 -    return classes;
 +    for (final IContextSource child : unit.getChildContexts()) {
@@ -1721,7 +1812,7 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..4d12c4d6c1fb940e0bfe6167beefa4c1
    }
  
    public boolean instanceOf(String valclass, String refclass) {
-@@ -254,6 +246,17 @@ public class StructContext {
+@@ -254,6 +251,17 @@ public class StructContext {
      } catch (final IOException ex) {
        DecompilerContext.getLogger().writeMessage("Failed to close out result saver", IFernflowerLogger.Severity.ERROR, ex);
      }
@@ -1922,7 +2013,7 @@ index 4261dce0b37505d22c6e9ee7c3e0bdb7e5331cfb..ef21a6cbed4863545cff4f89a18a47a5
 +  }*/
  }
 diff --git a/src/org/jetbrains/java/decompiler/util/ClasspathScanner.java b/src/org/jetbrains/java/decompiler/util/ClasspathScanner.java
-index ad9f8c22d02565f22720a4fa8819511124598dac..0cdeb5bbd8581965a96211dabc17bc18f3cde687 100644
+index ad9f8c22d02565f22720a4fa8819511124598dac..db6834b2e7013fac01f42dfc406cb5b48e47bfea 100644
 --- a/src/org/jetbrains/java/decompiler/util/ClasspathScanner.java
 +++ b/src/org/jetbrains/java/decompiler/util/ClasspathScanner.java
 @@ -2,18 +2,17 @@
@@ -2002,18 +2093,18 @@ index ad9f8c22d02565f22720a4fa8819511124598dac..0cdeb5bbd8581965a96211dabc17bc18
 +
 +      @Override
 +      public Entries getEntries() {
-+        final List<String> classNames = new ArrayList<>();
++        final List<Entry> classNames = new ArrayList<>();
 +        final List<String> directoryNames = new ArrayList<>();
-+        final List<String> otherEntries = new ArrayList<>();
++        final List<Entry> otherEntries = new ArrayList<>();
 +
 +        try {
 +          this.reader.list().forEach(name -> {
 +            if (name.endsWith("/")) {
 +              directoryNames.add(name.substring(0, name.length() - 1));
 +            } else if (name.endsWith(CLASS_SUFFIX)) {
-+              classNames.add(name.substring(0, name.length() - CLASS_SUFFIX.length()));
++              classNames.add(Entry.atBase(name.substring(0, name.length() - CLASS_SUFFIX.length())));
 +            } else {
-+              otherEntries.add(name);
++              otherEntries.add(Entry.atBase(name));
 +            }
 +          });
 +        } catch (final IOException ex) {

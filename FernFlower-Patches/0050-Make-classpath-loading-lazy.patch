@@ -67,7 +67,7 @@ index 8bbe04c2f404b6c43a6a216bf2a99d3b69a2ad93..34d45dae475676add94842007edecd88
  
    // *****************************************************************************
 diff --git a/src/org/jetbrains/java/decompiler/main/Fernflower.java b/src/org/jetbrains/java/decompiler/main/Fernflower.java
-index c62bf0d68c62e0a982104172ce4f78ae4a6f233b..b1e237d2b6b79ebcb2c0e30061b1d313e1aff653 100644
+index 22cb517d3ab2901bb7d88e38802eb2825584b78d..b1e237d2b6b79ebcb2c0e30061b1d313e1aff653 100644
 --- a/src/org/jetbrains/java/decompiler/main/Fernflower.java
 +++ b/src/org/jetbrains/java/decompiler/main/Fernflower.java
 @@ -9,7 +9,6 @@ import org.jetbrains.java.decompiler.modules.renamer.PoolInterceptor;
@@ -127,17 +127,15 @@ index c62bf0d68c62e0a982104172ce4f78ae4a6f233b..b1e237d2b6b79ebcb2c0e30061b1d313
    public void decompileContext() {
      if (converter != null) {
        converter.rename();
-@@ -124,8 +141,8 @@ public class Fernflower implements IDecompiledData {
+@@ -124,6 +141,7 @@ public class Fernflower implements IDecompiledData {
    }
  
    public void clearContext() {
--    DecompilerContext.setCurrentContext(null);
-     structContext.clear();
-+    DecompilerContext.setCurrentContext(null);
++    structContext.clear();
+     DecompilerContext.setCurrentContext(null);
    }
  
-   @Override
-@@ -139,7 +156,12 @@ public class Fernflower implements IDecompiledData {
+@@ -138,7 +156,12 @@ public class Fernflower implements IDecompiledData {
        return entryName.substring(0, entryName.lastIndexOf('/') + 1) + simpleClassName + ".java";
      }
      else {
@@ -226,7 +224,7 @@ index 7837939efab2b1caf023dc2f5b0a52659ce032bd..eb837996028dd156e8e79435118aa9dd
      engine.addSource(source);
    }
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
-index c8acfeb637ea18fb06840f696c3b444202f02d64..0397af8fd1d3f547c59483b7899c0a7d327ab94d 100644
+index 3e939e4e5a39fce84d694a02e2e53ec486e50ba5..056ca56d6e598c97c07e19ea5a4038738328f284 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 @@ -3,7 +3,7 @@ package org.jetbrains.java.decompiler.main.decompiler;
@@ -238,7 +236,7 @@ index c8acfeb637ea18fb06840f696c3b444202f02d64..0397af8fd1d3f547c59483b7899c0a7d
  import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
  import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
  import org.jetbrains.java.decompiler.main.extern.IResultSaver;
-@@ -23,7 +23,7 @@ import java.util.zip.ZipEntry;
+@@ -22,7 +22,7 @@ import java.util.zip.ZipEntry;
  import java.util.zip.ZipFile;
  import java.util.zip.ZipOutputStream;
  
@@ -247,7 +245,7 @@ index c8acfeb637ea18fb06840f696c3b444202f02d64..0397af8fd1d3f547c59483b7899c0a7d
    @SuppressWarnings("UseOfSystemOutOrSystemErr")
    public static void main(String[] args) {
      final long startTime = System.currentTimeMillis();
-@@ -171,17 +171,25 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+@@ -169,17 +169,25 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
        saver = new ThreadSafeResultSaver(root);
      }
  
@@ -274,7 +272,7 @@ index c8acfeb637ea18fb06840f696c3b444202f02d64..0397af8fd1d3f547c59483b7899c0a7d
    public void addWhitelist(String prefix) {
      engine.addWhitelist(prefix);
    }
-@@ -199,8 +207,8 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+@@ -197,8 +205,8 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
    // Interface IBytecodeProvider
    // *******************************************************************
  
@@ -282,14 +280,14 @@ index c8acfeb637ea18fb06840f696c3b444202f02d64..0397af8fd1d3f547c59483b7899c0a7d
 -  public byte[] getBytecode(String externalPath, String internalPath) throws IOException {
 +  // @Override
 +  public byte[] getBytecode(String externalPath, String internalPath) throws IOException { // UNUSED
+     File file = new File(externalPath);
      if (internalPath == null) {
-       File file = new File(externalPath);
        return InterpreterUtil.getBytes(file);
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ThreadSafeResultSaver.java b/src/org/jetbrains/java/decompiler/main/decompiler/ThreadSafeResultSaver.java
-index 565949b9782abfbb9303e86b59cca0986a9149df..73a32db0377238438f4c67762bcb09198eea82a4 100644
+index 585494c81bda9c2bde5ea284fb8851df3c1b072b..2c7e9daadb79ec03f7d3070c8dfd2032285a739b 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/ThreadSafeResultSaver.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/ThreadSafeResultSaver.java
-@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
+@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
  import java.util.concurrent.ExecutorService;
  import java.util.concurrent.Executors;
  import java.util.concurrent.Future;
@@ -297,17 +295,30 @@ index 565949b9782abfbb9303e86b59cca0986a9149df..73a32db0377238438f4c67762bcb0919
  import java.util.jar.JarOutputStream;
  import java.util.jar.Manifest;
  import java.util.zip.ZipEntry;
-@@ -212,6 +213,10 @@ public class ThreadSafeResultSaver implements IResultSaver {
-       for (final Map.Entry<String, ArchiveContext> entry : this.archiveContexts.entrySet()) {
-         DecompilerContext.getLogger().writeMessage("Unclosed archive detected at end of run in " + entry.getKey(), IFernflowerLogger.Severity.ERROR);
-         entry.getValue().executor.shutdown();
+@@ -204,6 +205,23 @@ public class ThreadSafeResultSaver implements IResultSaver {
+     }
+   }
+ 
++  @Override
++  public void close() throws IOException {
++    if (!this.archiveContexts.isEmpty()) {
++      for (final Map.Entry<String, ArchiveContext> entry : this.archiveContexts.entrySet()) {
++        DecompilerContext.getLogger().writeMessage("Unclosed archive detected at end of run in " + entry.getKey(), IFernflowerLogger.Severity.ERROR);
++        entry.getValue().executor.shutdown();
 +        try {
 +          entry.getValue().executor.awaitTermination(30, TimeUnit.SECONDS);
 +        } catch (final InterruptedException ignored) {
 +        }
-         entry.getValue().stream.close();
-       }
-       this.archiveContexts.clear();
++        entry.getValue().stream.close();
++      }
++      this.archiveContexts.clear();
++    }
++
++  }
++
+   private String getAbsolutePath(String path) {
+     return new File(target, path).getAbsolutePath();
+   }
 diff --git a/src/org/jetbrains/java/decompiler/main/extern/IBytecodeProvider.java b/src/org/jetbrains/java/decompiler/main/extern/IBytecodeProvider.java
 index ac72d7c6b33c7808f1d1a6b3ef6945abb8012ae5..7a06c6d5e53b5015ad12622e1b7345264d6faca7 100644
 --- a/src/org/jetbrains/java/decompiler/main/extern/IBytecodeProvider.java
@@ -534,27 +545,34 @@ index 0000000000000000000000000000000000000000..2eb79203495bf48aa2693c0a2e4455fa
 +  }
 +}
 diff --git a/src/org/jetbrains/java/decompiler/main/extern/IResultSaver.java b/src/org/jetbrains/java/decompiler/main/extern/IResultSaver.java
-index eb2d5a7a09acca7a0fc101c6d31c364867ea2eb8..92a2b2a4511cdae68e738873612c3ca285447b77 100644
+index e16c60301264feaeaabfaf281495807d888456db..db3ea7dbcca02e16ba0bd6095903f778aa0365cb 100644
 --- a/src/org/jetbrains/java/decompiler/main/extern/IResultSaver.java
 +++ b/src/org/jetbrains/java/decompiler/main/extern/IResultSaver.java
-@@ -7,6 +7,8 @@ import java.nio.ByteOrder;
+@@ -1,11 +1,14 @@
+ // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+ package org.jetbrains.java.decompiler.main.extern;
+ 
++import java.io.IOException;
+ import java.nio.ByteBuffer;
+ import java.nio.ByteOrder;
  import java.util.jar.Manifest;
  
- public interface IResultSaver extends AutoCloseable {
+-public interface IResultSaver {
++public interface IResultSaver extends AutoCloseable {
 +  // path: relative path to archive
 +  // archiveName: a child, relative to path
    void saveFolder(String path);
  
    void copyFile(String source, String path, String entryName);
-@@ -29,7 +31,7 @@ public interface IResultSaver extends AutoCloseable {
+@@ -28,6 +31,8 @@ public interface IResultSaver {
    }
  
    void closeArchive(String path, String archiveName);
--  
-+
-   @Override
-   default void close() throws IOException {}
++  @Override
++  default void close() throws IOException {}
  
+   default byte[] getCodeLineData(int[] mappings) {
+     if (mappings == null || mappings.length == 0) {
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/decompose/DominatorTreeExceptionFilter.java b/src/org/jetbrains/java/decompiler/modules/decompiler/decompose/DominatorTreeExceptionFilter.java
 index 318d95cd5427cda3ec721797c181fe68cb95b6db..9df2b7883e6ae098f13bf625ce80eb678e22b4cd 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/decompose/DominatorTreeExceptionFilter.java
@@ -619,7 +637,7 @@ index ba09aa17789940419bb4bf45bd1aaddda9189ca5..b72485100b9b25b1fe27966cc7b8b553
                stack.add(clParent);
                stackSubNodes.add(node);
 diff --git a/src/org/jetbrains/java/decompiler/struct/ContextUnit.java b/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
-index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7e287a800 100644
+index 5e119e5030efab2bccc1bd96601075c081056339..1c6cf593d737a37c498a0ee40920a8c7e287a800 100644
 --- a/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
 +++ b/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
 @@ -2,15 +2,13 @@
@@ -641,7 +659,7 @@ index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7
  import java.nio.charset.StandardCharsets;
  import java.util.ArrayList;
  import java.util.List;
-@@ -18,218 +16,187 @@ import java.util.concurrent.ExecutionException;
+@@ -18,221 +16,187 @@ import java.util.concurrent.ExecutionException;
  import java.util.concurrent.ExecutorService;
  import java.util.concurrent.Executors;
  import java.util.concurrent.Future;
@@ -785,10 +803,7 @@ index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7
 -        for (String[] pair : otherEntries) {
 -          resultSaver.copyFile(pair[0], filename, pair[1]);
 -        }
-+  public byte/* @Nullable */[] getClassBytes(final String className) throws IOException {
-+    return this.source.getClassBytes(className);
-+  }
- 
+-
 -        // classes
 -        for (int i = 0; i < classes.size(); i++) {
 -          StructClass cl = classes.get(i);
@@ -810,15 +825,14 @@ index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7
 -            }
 -          }
 -        }
-+  public List<String> getDirectoryNames() {
-+    this.initEntries();
-+    return this.dirEntries;
++  public byte/* @Nullable */[] getClassBytes(final String className) throws IOException {
++    return this.source.getClassBytes(className);
 +  }
  
 -        break;
-+  public List<IContextSource.Entry> getOtherEntries() {
++  public List<String> getDirectoryNames() {
 +    this.initEntries();
-+    return this.otherEntries;
++    return this.dirEntries;
 +  }
  
 -      case TYPE_JAR:
@@ -826,17 +840,18 @@ index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7
 -        // create archive file
 -        resultSaver.saveFolder(archivePath);
 -        resultSaver.createArchive(archivePath, filename, manifest);
-+  public List<IContextSource> getChildContexts() {
++  public List<IContextSource.Entry> getOtherEntries() {
 +    this.initEntries();
-+    return this.childContexts;
++    return this.otherEntries;
 +  }
  
 -        // directory entries
 -        for (String dirEntry : dirEntries) {
 -          resultSaver.saveDirEntry(archivePath, filename, dirEntry);
 -        }
-+  public String getName() {
-+    return this.source.getName();
++  public List<IContextSource> getChildContexts() {
++    this.initEntries();
++    return this.childContexts;
 +  }
  
 -        // non-class entries
@@ -845,6 +860,13 @@ index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7
 -            resultSaver.copyEntry(pair[0], archivePath, filename, pair[1]);
 -          }
 -        }
++  public String getName() {
++    return this.source.getName();
++  }
+ 
+-        //Whooo threads!
+-        int threads = DecompilerContext.getThreads();
+-        if (threads > 1) {
 +  public void clear() throws IOException {
 +    synchronized (this) {
 +      this.entriesInitialized = false;
@@ -854,19 +876,14 @@ index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7
 +    }
 +  }
  
--        //Whooo threads!
--        int threads = DecompilerContext.getThreads();
--        if (threads > 1) {
+-          DecompilerContext rootContext = DecompilerContext.getCurrentContext();
+-          ExecutorService executor = Executors.newFixedThreadPool(threads);
 +  public void save(final Function<String, StructClass> loader) throws IOException {
 +    this.initEntries();
 +    final IContextSource.IOutputSink sink = this.source.createOutputSink(this.resultSaver);
 +    if (sink == null) {
 +      throw new IllegalStateException("Context source " + this.source + " cannot be saved, but had a save requested.");
 +    }
- 
--          DecompilerContext rootContext = DecompilerContext.getCurrentContext();
--          ExecutorService executor = Executors.newFixedThreadPool(threads);
-+    sink.begin();
  
 -          //Compute the classes we need to decomp.
 -          List<ClassContext> toProcess = IntStream.range(0, classes.size()).parallel()
@@ -877,10 +894,7 @@ index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7
 -            .filter(e -> e.entryName != null)
 -            .collect(Collectors.toList());
 -          List<Future<?>> futures = new ArrayList<>(toProcess.size());
-+    // directory entries
-+    for (String dirEntry : dirEntries) {
-+      sink.acceptDirectory(dirEntry);
-+    }
++    sink.begin();
  
 -          //Submit preprocessor jobs.
 -          for (ClassContext clCtx : toProcess) {
@@ -891,14 +905,21 @@ index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7
 -              DecompilerContext.setCurrentContext(null);
 -            }));
 -          }
++    // directory entries
++    for (String dirEntry : dirEntries) {
++      sink.acceptDirectory(dirEntry);
++    }
+ 
+-          //Ask the executor to shutdown
+-          executor.shutdown();
+-          waitForAll(futures);
+-          futures.clear();
 +    // non-class entries
 +    for (IContextSource.Entry otherEntry : otherEntries) {
 +      sink.acceptOther(otherEntry.path());
 +    }
  
--          //Ask the executor to shutdown
--          waitForAll(futures);
--          futures.clear();
+-          executor = Executors.newFixedThreadPool(threads);
 +    //Whooo threads!
 +    int threads = DecompilerContext.getThreads();
 +    if (threads > 1) {
@@ -1002,7 +1023,7 @@ index 920932069cc12c2d55842559ba0060be3f227262..1c6cf593d737a37c498a0ee40920a8c7
  
    private static void waitForAll(List<Future<?>> futures) {
      for (Future<?> future : futures) {
-@@ -241,16 +208,19 @@ public class ContextUnit {
+@@ -244,16 +208,19 @@ public class ContextUnit {
      }
    }
  
@@ -1497,17 +1518,17 @@ index b7bd346863cd2e56c513b60dcb3c2923f2d7813a..fb3aaad2362131cfb39ebd5963a5de7f
      return (majorVersion > CodeConstants.BYTECODE_JAVA_LE_4 ||
              (majorVersion == CodeConstants.BYTECODE_JAVA_LE_4 && minorVersion > 0)); // FIXME: check second condition
 diff --git a/src/org/jetbrains/java/decompiler/struct/StructContext.java b/src/org/jetbrains/java/decompiler/struct/StructContext.java
-index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af533729715fe8679 100644
+index 5aa59c4d71dc73bbc8875879ac4c90ab030d6920..65bb5858de09ce63f3273f4af533729715fe8679 100644
 --- a/src/org/jetbrains/java/decompiler/struct/StructContext.java
 +++ b/src/org/jetbrains/java/decompiler/struct/StructContext.java
-@@ -3,185 +3,182 @@ package org.jetbrains.java.decompiler.struct;
+@@ -3,184 +3,182 @@ package org.jetbrains.java.decompiler.struct;
  
  import org.jetbrains.java.decompiler.main.DecompilerContext;
  import org.jetbrains.java.decompiler.main.extern.IResultSaver;
+-import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger.Severity;
 +import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
 +import org.jetbrains.java.decompiler.main.extern.IContextSource;
- import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
--import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger.Severity;
++import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
  import org.jetbrains.java.decompiler.struct.gen.generics.GenericMain;
  import org.jetbrains.java.decompiler.struct.gen.generics.GenericMethodDescriptor;
 -import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
@@ -1603,12 +1624,12 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
 +    });
 +    return ret == getSentinel() ? null : ret;
 +  }
- 
--      unit.reload(loader);
++
 +  public boolean hasClass(final String name) {
 +    return this.unitsByClassName.containsKey(name);
 +  }
-+
+ 
+-      unit.reload(loader);
 +  public List<StructClass> getOwnClasses() {
 +    return this.units.stream()
 +      .filter(ContextUnit::isOwn)
@@ -1663,7 +1684,18 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
 -      if (files != null) {
 -        for (int i = files.length - 1; i >= 0; i--) {
 -          addSpace(path, files[i], isOwn, level + 1);
--        }
++      addSpace(new DirectoryContextSource(this.legacyProvider, file), isOwn);
++    } else if (file.isFile()) {
++      final String name = file.getName();
++      if (name.endsWith(".jar") || name.endsWith(".zip")) {
++        // archive
++        try {
++          addSpace(new JarContextSource(this.legacyProvider, file), isOwn);
++        } catch (final IOException ex) {
++          final String message = "Invalid archive " + file;
++          DecompilerContext.getLogger().writeMessage(message, IFernflowerLogger.Severity.ERROR, ex);
++          throw new UncheckedIOException(message, ex);
+         }
 -      }
 -    }
 -    else {
@@ -1678,19 +1710,15 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
 -        else if (filename.endsWith(".zip")) {
 -          isArchive = true;
 -          addArchive(path, file, ContextUnit.TYPE_ZIP, isOwn);
-+      addSpace(new DirectoryContextSource(this.legacyProvider, file), isOwn);
-+    } else if (file.isFile()) {
-+      final String name = file.getName();
-+      if (name.endsWith(".jar") || name.endsWith(".zip")) {
-+        // archive
++      } else {
 +        try {
-+          addSpace(new JarContextSource(this.legacyProvider, file), isOwn);
++          addSpace(new SingleFileContextSource(this.legacyProvider, file), isOwn);
 +        } catch (final IOException ex) {
-+          final String message = "Invalid archive " + file;
++          final String message = "Invalid file " + file;
 +          DecompilerContext.getLogger().writeMessage(message, IFernflowerLogger.Severity.ERROR, ex);
 +          throw new UncheckedIOException(message, ex);
          }
--      }
+       }
 -      catch (IOException ex) {
 -        String message = "Corrupted archive file: " + file;
 -        DecompilerContext.getLogger().writeMessage(message, ex);
@@ -1699,13 +1727,18 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
 -      if (isArchive) {
 -        return;
 -      }
--
++    }
++  }
+ 
 -      ContextUnit unit = units.get(path);
 -      if (unit == null) {
 -        unit = new ContextUnit(ContextUnit.TYPE_FOLDER, null, path, isOwn, saver, decompiledData);
 -        units.put(path, unit);
 -      }
--
++  public void addSpace(final IContextSource source, final boolean isOwn) {
++    this.addSpace(source, isOwn, true);
++  }
+ 
 -      if (filename.endsWith(".class")) {
 -        try (DataInputFullStream in = loader.getClassStream(file.getAbsolutePath(), null)) {
 -          StructClass cl = StructClass.create(in, isOwn, loader);
@@ -1717,19 +1750,16 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
 -          String message = "Corrupted class file: " + file;
 -          DecompilerContext.getLogger().writeMessage(message, ex);
 -          throw new RuntimeException(ex);
-+      } else {
-+        try {
-+          addSpace(new SingleFileContextSource(this.legacyProvider, file), isOwn);
-+        } catch (final IOException ex) {
-+          final String message = "Invalid file " + file;
-+          DecompilerContext.getLogger().writeMessage(message, IFernflowerLogger.Severity.ERROR, ex);
-+          throw new UncheckedIOException(message, ex);
-         }
-       }
+-        }
+-      }
 -      else {
 -        unit.addOtherEntry(file.getAbsolutePath(), filename);
 -      }
-     }
+-    }
++  private void addSpace(final IContextSource source, final boolean isOwn, final boolean isRoot) {
++    final ContextUnit unit = new ContextUnit(source, isOwn, isRoot, saver, decompiledData);
++    this.units.add(unit);
++    initUnit(unit);
    }
  
 -  private void addArchive(String path, File file, int type, boolean isOwn) throws IOException {
@@ -1738,7 +1768,14 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
 -      Enumeration<? extends ZipEntry> entries = archive.entries();
 -      while (entries.hasMoreElements()) {
 -        ZipEntry entry = entries.nextElement();
--
++  private void initUnit(final ContextUnit unit) {
++    DecompilerContext.getLogger().writeMessage("Scanning classes from " + unit.getName(), IFernflowerLogger.Severity.INFO);
++    boolean isOwn = unit.isOwn();
++    for (final String clazz : unit.getClassNames()) {
++      final ContextUnit existing = this.unitsByClassName.putIfAbsent(clazz, unit);
++      if (existing != null) {
++        if (!isOwn || existing.isOwn()) continue;
+ 
 -        ContextUnit unit = units.get(path + "/" + file.getName());
 -        if (unit == null) {
 -          unit = new ContextUnit(type, path, file.getName(), isOwn, saver, decompiledData);
@@ -1747,9 +1784,8 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
 -          }
 -          units.put(path + "/" + file.getName(), unit);
 -        }
-+  public void addSpace(final IContextSource source, final boolean isOwn) {
-+    this.addSpace(source, isOwn, true);
-+  }
++        if (!this.unitsByClassName.replace(clazz, existing, unit)) continue;
++      }
  
 -        String name = entry.getName();
 -        if (!entry.isDirectory()) {
@@ -1759,7 +1795,7 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
 -            StructClass cl = StructClass.create(new DataInputFullStream(bytes), isOwn, loader);
 -            classes.put(cl.qualifiedName, cl);
 -            unit.addClass(cl, name);
--            loader.addClassLink(cl.qualifiedName, new LazyLoader.Link(file.getAbsolutePath(), name, bytes));
+-            loader.addClassLink(cl.qualifiedName, new LazyLoader.Link(file.getAbsolutePath(), name));
 -          }
 -          else {
 -            unit.addOtherEntry(file.getAbsolutePath(), name);
@@ -1768,42 +1804,26 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
 -        else {
 -          unit.addDirEntry(name);
 -        }
--      }
--    }
-+  private void addSpace(final IContextSource source, final boolean isOwn, final boolean isRoot) {
-+    final ContextUnit unit = new ContextUnit(source, isOwn, isRoot, saver, decompiledData);
-+    this.units.add(unit);
-+    initUnit(unit);
-   }
- 
++      DecompilerContext.getLogger().writeMessage("    " + clazz, IFernflowerLogger.Severity.TRACE);
++      if (isOwn) { // pre-load classes
++        this.getClass(clazz);
+       }
+     }
+-  }
+-
 -  public void addData(String path, String cls, byte[] data, boolean isOwn) throws IOException {
 -        ContextUnit unit = units.get(path);
 -        if (unit == null) {
 -          unit = new ContextUnit(ContextUnit.TYPE_FOLDER, path, cls, isOwn, saver, decompiledData);
 -          units.put(path, unit);
 -        }
-+  private void initUnit(final ContextUnit unit) {
-+    DecompilerContext.getLogger().writeMessage("Scanning classes from " + unit.getName(), IFernflowerLogger.Severity.INFO);
-+    boolean isOwn = unit.isOwn();
-+    for (final String clazz : unit.getClassNames()) {
-+      final ContextUnit existing = this.unitsByClassName.putIfAbsent(clazz, unit);
-+      if (existing != null) {
-+        if (!isOwn || existing.isOwn()) continue;
  
 -        StructClass cl = StructClass.create(new DataInputFullStream(data), isOwn, loader);
 -        classes.put(cl.qualifiedName, cl);
 -        unit.addClass(cl, cls);
 -        loader.addClassLink(cl.qualifiedName, new LazyLoader.Link(path, cls, data));
 -  }
-+        if (!this.unitsByClassName.replace(clazz, existing, unit)) continue;
-+      }
-+
-+      DecompilerContext.getLogger().writeMessage("    " + clazz, IFernflowerLogger.Severity.TRACE);
-+      if (isOwn) { // pre-load classes
-+        this.getClass(clazz);
-+      }
-+    }
- 
+-
 -  public Map<String, StructClass> getClasses() {
 -    return classes;
 +    for (final IContextSource child : unit.getChildContexts()) {
@@ -1812,10 +1832,17 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
    }
  
    public boolean instanceOf(String valclass, String refclass) {
-@@ -254,6 +251,17 @@ public class StructContext {
-     } catch (final IOException ex) {
-       DecompilerContext.getLogger().writeMessage("Failed to close out result saver", IFernflowerLogger.Severity.ERROR, ex);
-     }
+@@ -246,4 +244,24 @@ public class StructContext {
+     List<String> params = this.abstractNames.get(className + ' ' + methodName + ' ' + descriptor);
+     return params != null && index < params.size() ? params.get(index) : _default;
+   }
++
++  public void clear() {
++    try {
++      this.saver.close();
++    } catch (final IOException ex) {
++      DecompilerContext.getLogger().writeMessage("Failed to close out result saver", IFernflowerLogger.Severity.ERROR, ex);
++    }
 +
 +    for (final ContextUnit unit : this.units) {
 +      try {
@@ -1827,8 +1854,8 @@ index a3cec5d4e0097c95d596c924e49fe21b6423ef20..65bb5858de09ce63f3273f4af5337297
 +    this.units.clear();
 +    this.unitsByClassName.clear();
 +    this.classes.clear();
-   }
- 
++  }
++
  }
 diff --git a/src/org/jetbrains/java/decompiler/struct/StructField.java b/src/org/jetbrains/java/decompiler/struct/StructField.java
 index 232f47dd8d559f1cedb39b49bfd04bdec2d6c1b5..88944b5f67fd01ff52944ad784bad447d93c9f29 100644
@@ -2142,12 +2169,45 @@ index 0ba7dc421021d1c9b66d2ded304831c57130c62a..5cae8fa292900cb342cf9780fffa9563
    }
  
    public static byte[] getBytes(ZipFile archive, ZipEntry entry) throws IOException {
-diff --git a/src/org/jetbrains/java/decompiler/util/ZipFileCache.java b/src/org/jetbrains/java/decompiler/util/ZipFileCache.java
-index 92ebb33e213d4a9da802284f77df25b0cebbfa4f..2a235355871eb78e90254ea3533a6abcab8f62ec 100644
---- a/src/org/jetbrains/java/decompiler/util/ZipFileCache.java
-+++ b/src/org/jetbrains/java/decompiler/util/ZipFileCache.java
-@@ -1,3 +1,4 @@
-+// Copyright 2000-2022 JetBrains s.r.o. and ForgeFlower contributors Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- package org.jetbrains.java.decompiler.util;
+diff --git a/test/org/jetbrains/java/decompiler/DecompilerTestFixture.java b/test/org/jetbrains/java/decompiler/DecompilerTestFixture.java
+index 7d29c198014cbfee8092fd31461208ce58e7f775..19a1d66ab01ecfb5d755cc0be35aca1854eaf0ff 100644
+--- a/test/org/jetbrains/java/decompiler/DecompilerTestFixture.java
++++ b/test/org/jetbrains/java/decompiler/DecompilerTestFixture.java
+@@ -60,7 +60,7 @@ public class DecompilerTestFixture {
+     if (tempDir != null && cleanup) {
+       delete(tempDir);
+     }
+-    decompiler.close();
++    decompiler.clear();
+   }
  
- import java.io.File;
+   public File getTestDataDir() {
+@@ -78,11 +78,11 @@ public class DecompilerTestFixture {
+   public ConsoleDecompiler getDecompiler() {
+     return decompiler;
+   }
+-  
++
+   public void setCleanup(boolean value) {
+     this.cleanup = value;
+   }
+-  
++
+   public boolean getCleanup() {
+     return cleanup;
+   }
+@@ -149,7 +149,13 @@ public class DecompilerTestFixture {
+       }
+     }
+ 
+-    void close() {
++    void clear() {
++      try {
++        this.close();
++      } catch (final IOException ex) {
++        ex.printStackTrace();
++      }
++
+       for (ZipFile file : zipFiles.values()) {
+         try {
+           file.close();

@@ -69,10 +69,10 @@ index 23ed017fc66747daf2f7b603df7d123835145570..a72ad0aba0523cd803b4832b9e95d7f6
      defaults.put(EXPLICIT_GENERIC_ARGUMENTS, "0");
      defaults.put(INLINE_SIMPLE_LAMBDAS, "1");
 diff --git a/src/org/jetbrains/java/decompiler/struct/attr/StructModuleAttribute.java b/src/org/jetbrains/java/decompiler/struct/attr/StructModuleAttribute.java
-index 9fd6f89ddb90e1b348078a0615f3808007cc5aa4..efcb793b82388f3730f130ed0f02e0571fdb3da0 100644
+index 9fd6f89ddb90e1b348078a0615f3808007cc5aa4..fd1cf8a82a419524143e95d147c33e5f9773dca7 100644
 --- a/src/org/jetbrains/java/decompiler/struct/attr/StructModuleAttribute.java
 +++ b/src/org/jetbrains/java/decompiler/struct/attr/StructModuleAttribute.java
-@@ -1,13 +1,18 @@
+@@ -1,13 +1,17 @@
  // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  package org.jetbrains.java.decompiler.struct.attr;
  
@@ -82,7 +82,6 @@ index 9fd6f89ddb90e1b348078a0615f3808007cc5aa4..efcb793b82388f3730f130ed0f02e057
  
  import java.io.IOException;
 +import java.lang.module.ModuleDescriptor;
-+import java.lang.module.ModuleDescriptor.Version;
  import java.util.ArrayList;
  import java.util.Collections;
 +import java.util.EnumSet;
@@ -91,7 +90,7 @@ index 9fd6f89ddb90e1b348078a0615f3808007cc5aa4..efcb793b82388f3730f130ed0f02e057
  
  public class StructModuleAttribute extends StructGeneralAttribute {
    public String moduleName;
-@@ -38,6 +43,65 @@ public class StructModuleAttribute extends StructGeneralAttribute {
+@@ -38,6 +42,65 @@ public class StructModuleAttribute extends StructGeneralAttribute {
      this.provides = readProvides(data, pool);
    }
  
@@ -111,7 +110,7 @@ index 9fd6f89ddb90e1b348078a0615f3808007cc5aa4..efcb793b82388f3730f130ed0f02e057
 +      if ((requires.flags & CodeConstants.ACC_SYNTHETIC) != 0) rMods.add(ModuleDescriptor.Requires.Modifier.SYNTHETIC);
 +      if ((requires.flags & CodeConstants.ACC_MANDATED) != 0) rMods.add(ModuleDescriptor.Requires.Modifier.MANDATED);
 +      if (requires.moduleVersion != null) {
-+        builder.requires(rMods, requires.moduleName, Version.parse(requires.moduleVersion));
++        builder.requires(rMods, requires.moduleName, ModuleDescriptor.Version.parse(requires.moduleVersion));
 +      } else {
 +        builder.requires(rMods, requires.moduleName);
 +      }

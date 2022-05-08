@@ -204,10 +204,18 @@ index 464e41a3cd428e1883230bda55fa64172697d1c2..ac3997dc7910f7844b583699c532edfa
      }
    }
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/BaseDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/BaseDecompiler.java
-index 7837939efab2b1caf023dc2f5b0a52659ce032bd..eb837996028dd156e8e79435118aa9dd018d644b 100644
+index 7837939efab2b1caf023dc2f5b0a52659ce032bd..879d6aa53be80974d6b432a6bdbb58526388362d 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/BaseDecompiler.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/BaseDecompiler.java
-@@ -13,10 +13,15 @@ import java.util.Map;
+@@ -3,6 +3,7 @@ package org.jetbrains.java.decompiler.main.decompiler;
+ 
+ import org.jetbrains.java.decompiler.main.Fernflower;
+ import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
++import org.jetbrains.java.decompiler.main.extern.IContextSource;
+ import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
+ import org.jetbrains.java.decompiler.main.extern.IResultSaver;
+ 
+@@ -13,14 +14,27 @@ import java.util.Map;
  public class BaseDecompiler {
    private final Fernflower engine;
  
@@ -220,8 +228,20 @@ index 7837939efab2b1caf023dc2f5b0a52659ce032bd..eb837996028dd156e8e79435118aa9dd
 +    engine = new Fernflower(saver, options, logger);
 +  }
 +
++  public void addSource(IContextSource source) {
++    engine.addSource(source);
++  }
++
    public void addSource(File source) {
      engine.addSource(source);
+   }
+ 
++  public void addLibrary(IContextSource library) {
++    engine.addLibrary(library);
++  }
++
+   public void addLibrary(File library) {
+     engine.addLibrary(library);
    }
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 index 3e939e4e5a39fce84d694a02e2e53ec486e50ba5..056ca56d6e598c97c07e19ea5a4038738328f284 100644
@@ -637,7 +657,7 @@ index ba09aa17789940419bb4bf45bd1aaddda9189ca5..b72485100b9b25b1fe27966cc7b8b553
                stack.add(clParent);
                stackSubNodes.add(node);
 diff --git a/src/org/jetbrains/java/decompiler/struct/ContextUnit.java b/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
-index 5e119e5030efab2bccc1bd96601075c081056339..1c6cf593d737a37c498a0ee40920a8c7e287a800 100644
+index 5e119e5030efab2bccc1bd96601075c081056339..0816efb081b72dc7ce704ea92a2503b83012854a 100644
 --- a/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
 +++ b/src/org/jetbrains/java/decompiler/struct/ContextUnit.java
 @@ -2,15 +2,13 @@
@@ -659,7 +679,7 @@ index 5e119e5030efab2bccc1bd96601075c081056339..1c6cf593d737a37c498a0ee40920a8c7
  import java.nio.charset.StandardCharsets;
  import java.util.ArrayList;
  import java.util.List;
-@@ -18,221 +16,187 @@ import java.util.concurrent.ExecutionException;
+@@ -18,220 +16,186 @@ import java.util.concurrent.ExecutionException;
  import java.util.concurrent.ExecutorService;
  import java.util.concurrent.Executors;
  import java.util.concurrent.Future;
@@ -1016,13 +1036,11 @@ index 5e119e5030efab2bccc1bd96601075c081056339..1c6cf593d737a37c498a0ee40920a8c7
 -        resultSaver.closeArchive(archivePath, filename);
 +      }
      }
--  }
 +
 +    sink.close();
-+}
+   }
  
    private static void waitForAll(List<Future<?>> futures) {
-     for (Future<?> future : futures) {
 @@ -244,16 +208,19 @@ public class ContextUnit {
      }
    }

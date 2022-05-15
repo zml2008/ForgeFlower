@@ -1200,10 +1200,10 @@ index 0000000000000000000000000000000000000000..dbb6cc4d224fbb5ebbfc8156e8bea18e
 +}
 diff --git a/src/org/jetbrains/java/decompiler/struct/JarContextSource.java b/src/org/jetbrains/java/decompiler/struct/JarContextSource.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..56127f683eca1fe1d28624eada88bf578c243e6e
+index 0000000000000000000000000000000000000000..ef584a29055b12cec715039b9479e0d967114ae2
 --- /dev/null
 +++ b/src/org/jetbrains/java/decompiler/struct/JarContextSource.java
-@@ -0,0 +1,135 @@
+@@ -0,0 +1,148 @@
 +// Copyright 2000-2022 JetBrains s.r.o. and ForgeFlower contributors Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 +package org.jetbrains.java.decompiler.struct;
 +
@@ -1221,7 +1221,9 @@ index 0000000000000000000000000000000000000000..56127f683eca1fe1d28624eada88bf57
 +import java.io.InputStream;
 +import java.util.ArrayList;
 +import java.util.Enumeration;
++import java.util.LinkedHashSet;
 +import java.util.List;
++import java.util.Set;
 +import java.util.jar.Manifest;
 +import java.util.zip.ZipEntry;
 +import java.util.zip.ZipFile;
@@ -1258,7 +1260,7 @@ index 0000000000000000000000000000000000000000..56127f683eca1fe1d28624eada88bf57
 +  @Override
 +  public Entries getEntries() {
 +    final List<Entry> classes = new ArrayList<>();
-+    final List<String> directories = new ArrayList<>();
++    final Set<String> directories = new LinkedHashSet<>();
 +    final List<Entry> others = new ArrayList<>();
 +
 +    Enumeration<? extends ZipEntry> entries = this.file.entries();
@@ -1266,6 +1268,7 @@ index 0000000000000000000000000000000000000000..56127f683eca1fe1d28624eada88bf57
 +      ZipEntry entry = entries.nextElement();
 +
 +      String name = entry.getName();
++      addDirectories(entry, directories);
 +      if (!entry.isDirectory()) {
 +        if (name.endsWith(CLASS_SUFFIX)) {
 +          classes.add(Entry.parse(name.substring(0, name.length() - CLASS_SUFFIX.length())));
@@ -1274,11 +1277,21 @@ index 0000000000000000000000000000000000000000..56127f683eca1fe1d28624eada88bf57
 +          others.add(Entry.parse(name));
 +        }
 +      }
-+      else {
-+        directories.add(name);
-+      }
 +    }
-+    return new Entries(classes, directories, others, List.of());
++    return new Entries(classes, List.copyOf(directories), others, List.of());
++  }
++
++  private void addDirectories(final ZipEntry entry, final Set<String> directories) {
++    final String name = entry.getName();
++    int segmentIndex = name.indexOf('/');
++    while (segmentIndex != -1) {
++      directories.add(name.substring(0, segmentIndex));
++      segmentIndex = name.indexOf('/', segmentIndex + 1);
++    }
++
++    if (entry.isDirectory()) {
++      directories.add(name);
++    }
 +  }
 +
 +  @Override

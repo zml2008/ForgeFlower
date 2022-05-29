@@ -45,10 +45,10 @@ index b95ef0727bc66c3401161abbbcc935c88f9abd42..690b54e282bff7edbd3bca9e3d79b918
      List<Exprent> ret = new ArrayList<>();
      for (Exprent expr : lst) {
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchAllStatement.java b/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchAllStatement.java
-index ef2fb6128921b74b815b39d6be6e9c7290a2be70..788f116a39c069d5d9c0bd8e2c44bd2b37e0a4f8 100644
+index 499968a156b91709d769ac5867e9fa9ce6f23232..89664837c365d106d53c89fb94da9bed6b9cfc72 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchAllStatement.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchAllStatement.java
-@@ -86,6 +86,10 @@ public final class CatchAllStatement extends Statement {
+@@ -85,6 +85,10 @@ public final class CatchAllStatement extends Statement {
              return null;
            }
  
@@ -60,7 +60,7 @@ index ef2fb6128921b74b815b39d6be6e9c7290a2be70..788f116a39c069d5d9c0bd8e2c44bd2b
              return new CatchAllStatement(head, exc);
            }
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java b/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java
-index 9db86209721e133416de8379accb6ee5a1235d01..a1d700f0129bd04957067c5bc00f90e6961b1879 100644
+index 97c1d3f816dcfc21811da2097744bfe9e5747813..5444b3ce893eafbc1fac90313a1a20debcc89d0f 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java
 @@ -133,6 +133,10 @@ public final class CatchStatement extends Statement {

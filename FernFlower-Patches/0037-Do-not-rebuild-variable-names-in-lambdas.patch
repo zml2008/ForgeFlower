@@ -6,7 +6,7 @@ Subject: [PATCH] Do not rebuild variable names in lambdas.
 Breaks outer this references. Code existed before my time, no idea what it's intention is.
 
 diff --git a/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java b/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
-index 2d00c7f88b838eaec5582b108701581b60d387ae..3530d2f46c4ad90974796e41f664613420e2689a 100644
+index 4d158b9b41c14ddce39cf0f6dd4bfdbc0458d11b..05726e7bd04283a99c6ba906b9e46be98c3e8b64 100644
 --- a/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
 +++ b/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
 @@ -163,7 +163,7 @@ public class NestedClassProcessor {

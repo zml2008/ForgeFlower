@@ -6,11 +6,11 @@ Subject: [PATCH] Add jrt option to load classes from a specific JVM
 This allows decompiling classes targeting any Java version while running on a Java 17 JVM
 
 diff --git a/README.md b/README.md
-index 225b42bcbd388c395fe51d2c5edda8d1cb1127b2..65a07c7d2ca1e906f0bc5d7ea6bd221515c582cd 100644
+index 4621cadc55b0814bf7f20fc5fff482b7756b5c6c..10c2f59c572a5db8255681799111e5be9a34422f 100644
 --- a/README.md
 +++ b/README.md
-@@ -66,6 +66,7 @@ The rest of options can be left as they are: they are aimed at professional reve
- - nls (0): define new line character to be used for output. 0 - '\r\n' (Windows), 1 - '\n' (Unix), default is OS-dependent
+@@ -70,6 +70,7 @@ The rest of options can be left as they are: they are aimed at professional reve
+ - qin (1): Whether to always qualify inner class references. If this is false, inner class names can be shortened depending on location
  - ind: indentation string (default is 3 spaces)
  - log (INFO): a logging level, possible values are TRACE, INFO, WARN, ERROR
 +- jrt (): The path to a java runtime to add to the classpath, or `1` or `current` to add the java runtime of the active JVM to the classpath.
@@ -18,10 +18,10 @@ index 225b42bcbd388c395fe51d2c5edda8d1cb1127b2..65a07c7d2ca1e906f0bc5d7ea6bd2215
  ### Renaming identifiers
  
 diff --git a/src/org/jetbrains/java/decompiler/code/CodeConstants.java b/src/org/jetbrains/java/decompiler/code/CodeConstants.java
-index 2c5cb42f61d96c40d52603f02600a9097a645eb9..fbb17c07a7f3a1a2020bdaf2fe8b3dafc15b57b5 100644
+index 6cfc20f9776e118e546510253c8664c442a3146d..da9aee95eae740e96f80711562de26e2fae853b6 100644
 --- a/src/org/jetbrains/java/decompiler/code/CodeConstants.java
 +++ b/src/org/jetbrains/java/decompiler/code/CodeConstants.java
-@@ -65,6 +65,8 @@ public interface CodeConstants {
+@@ -69,6 +69,8 @@ public interface CodeConstants {
    int ACC_FINAL = 0x0010;
    int ACC_SYNCHRONIZED = 0x0020;
    int ACC_OPEN = 0x0020;
@@ -31,10 +31,10 @@ index 2c5cb42f61d96c40d52603f02600a9097a645eb9..fbb17c07a7f3a1a2020bdaf2fe8b3daf
    int ACC_ABSTRACT = 0x0400;
    int ACC_STRICT = 0x0800;
 diff --git a/src/org/jetbrains/java/decompiler/main/Fernflower.java b/src/org/jetbrains/java/decompiler/main/Fernflower.java
-index b1e237d2b6b79ebcb2c0e30061b1d313e1aff653..1ba3e92249219c2bbd2153099de1b74a27db2ab7 100644
+index bddc90c53144be0dda0b80b78cb031334745c052..81f2f3ffa8c5173a361d0b925c65c376c1a80376 100644
 --- a/src/org/jetbrains/java/decompiler/main/Fernflower.java
 +++ b/src/org/jetbrains/java/decompiler/main/Fernflower.java
-@@ -93,6 +93,13 @@ public class Fernflower implements IDecompiledData {
+@@ -106,6 +106,13 @@ public class Fernflower implements IDecompiledData {
  
      if (DecompilerContext.getOption(IFernflowerPreferences.INCLUDE_ENTIRE_CLASSPATH)) {
        ClasspathScanner.addAllClasspath(structContext);
@@ -49,7 +49,7 @@ index b1e237d2b6b79ebcb2c0e30061b1d313e1aff653..1ba3e92249219c2bbd2153099de1b74a
    }
  
 diff --git a/src/org/jetbrains/java/decompiler/main/extern/IFernflowerPreferences.java b/src/org/jetbrains/java/decompiler/main/extern/IFernflowerPreferences.java
-index 23ed017fc66747daf2f7b603df7d123835145570..a72ad0aba0523cd803b4832b9e95d7f67c8d1d7c 100644
+index cc0b70e555ce969185c150e39a551fe2f45a0288..808455b0b2d15420bd83c347bb0bba7f0d1dcb86 100644
 --- a/src/org/jetbrains/java/decompiler/main/extern/IFernflowerPreferences.java
 +++ b/src/org/jetbrains/java/decompiler/main/extern/IFernflowerPreferences.java
 @@ -35,6 +35,7 @@ public interface IFernflowerPreferences {
@@ -58,16 +58,16 @@ index 23ed017fc66747daf2f7b603df7d123835145570..a72ad0aba0523cd803b4832b9e95d7f6
  
 +  String INCLUDE_JAVA_RUNTIME = "jrt";
    String INCLUDE_ENTIRE_CLASSPATH = "iec";
+   String QUALIFY_INNER_CLASSES = "qin";
    String EXPLICIT_GENERIC_ARGUMENTS = "ega";
-   String INLINE_SIMPLE_LAMBDAS = "isl";
-@@ -92,6 +93,7 @@ public interface IFernflowerPreferences {
+@@ -93,6 +94,7 @@ public interface IFernflowerPreferences {
      defaults.put(IGNORE_INVALID_BYTECODE, "0");
      defaults.put(VERIFY_ANONYMOUS_CLASSES, "0");
  
 +    defaults.put(INCLUDE_JAVA_RUNTIME, "");
      defaults.put(INCLUDE_ENTIRE_CLASSPATH, "0");
+     defaults.put(QUALIFY_INNER_CLASSES, "1");
      defaults.put(EXPLICIT_GENERIC_ARGUMENTS, "0");
-     defaults.put(INLINE_SIMPLE_LAMBDAS, "1");
 diff --git a/src/org/jetbrains/java/decompiler/struct/attr/StructModuleAttribute.java b/src/org/jetbrains/java/decompiler/struct/attr/StructModuleAttribute.java
 index 9fd6f89ddb90e1b348078a0615f3808007cc5aa4..fd1cf8a82a419524143e95d147c33e5f9773dca7 100644
 --- a/src/org/jetbrains/java/decompiler/struct/attr/StructModuleAttribute.java
@@ -157,10 +157,10 @@ index 9fd6f89ddb90e1b348078a0615f3808007cc5aa4..fd1cf8a82a419524143e95d147c33e5f
      int requiresCount = data.readUnsignedShort();
      if (requiresCount <= 0) return Collections.emptyList();
 diff --git a/src/org/jetbrains/java/decompiler/util/ClasspathScanner.java b/src/org/jetbrains/java/decompiler/util/ClasspathScanner.java
-index db6834b2e7013fac01f42dfc406cb5b48e47bfea..a68a62e26f5ac28e3d9feb89a751975ec992cff8 100644
+index db77a2c0b166372142e10cbafdcdaa6e1c4de9b8..a68a62e26f5ac28e3d9feb89a751975ec992cff8 100644
 --- a/src/org/jetbrains/java/decompiler/util/ClasspathScanner.java
 +++ b/src/org/jetbrains/java/decompiler/util/ClasspathScanner.java
-@@ -2,24 +2,34 @@
+@@ -2,19 +2,29 @@
  package org.jetbrains.java.decompiler.util;
  
  import java.lang.module.*;
@@ -190,12 +190,6 @@ index db6834b2e7013fac01f42dfc406cb5b48e47bfea..a68a62e26f5ac28e3d9feb89a751975e
  
  public class ClasspathScanner {
  
-     public static void addAllClasspath(StructContext ctx) {
--      Set<String> found = new HashSet<String>();
-+      Set<String> found = new HashSet<>();
-       String[] props = { System.getProperty("java.class.path"), System.getProperty("sun.boot.class.path") };
-       for (String prop : props) {
-         if (prop == null)
 @@ -52,20 +62,58 @@ public class ClasspathScanner {
        }
      }

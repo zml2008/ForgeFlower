@@ -5,7 +5,7 @@ Subject: [PATCH] Quick & dirty run time logging
 
 
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
-index bd3535557b78014919d34c3ee5d17c34ea523e2d..3e939e4e5a39fce84d694a02e2e53ec486e50ba5 100644
+index 1172775610851755373694f48903594af615f816..212ac6b85949acec6bdbd0371ccb7a01d2a49b94 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 @@ -25,6 +25,7 @@ import java.util.zip.ZipOutputStream;
@@ -13,7 +13,7 @@ index bd3535557b78014919d34c3ee5d17c34ea523e2d..3e939e4e5a39fce84d694a02e2e53ec4
    @SuppressWarnings("UseOfSystemOutOrSystemErr")
    public static void main(String[] args) {
 +    final long startTime = System.currentTimeMillis();
-     List<String> params = new ArrayList<String>();
+     List<String> params = new ArrayList<>();
      for (int x = 0; x < args.length; x++) {
        if (args[x].startsWith("-cfg")) {
 @@ -124,6 +125,8 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {

@@ -24,7 +24,7 @@ index cc6f6ad706aa1fcb0b129ea9da80b47fd77f0a5f..dbee9d14a323279ca226e5e6f32f0f41
  
        if (TryHelper.enhanceTryStats(root, mt)) {
 diff --git a/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java b/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
-index b7b542de1ccf9d2bf8e514b96465bb46a8c777e0..4d158b9b41c14ddce39cf0f6dd4bfdbc0458d11b 100644
+index 52575665f1021b39a09412a774587b10dad34812..11d8ee5bda5802de54f689c797e8a06f11c1627f 100644
 --- a/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
 +++ b/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
 @@ -141,6 +141,9 @@ public class NestedClassProcessor {
@@ -721,7 +721,7 @@ index 572dde919042921ffebc5f83e0d9f5ebe7276788..51a88dc3d8ecaefd6aff46cbc24eecbe
    }
  
 diff --git a/src/org/jetbrains/java/decompiler/util/SFormsFastMapDirect.java b/src/org/jetbrains/java/decompiler/util/SFormsFastMapDirect.java
-index f218e82caff716a20362aaec0e0bacb23698740c..0fa55239368ccadfd674472480d6478c9c1cbe88 100644
+index bb8b4dd9b866ec54491da50310b09b6fcb0bdf3f..3ea10bf76c3d2faf0e3e5683411597dbea5bfa7b 100644
 --- a/src/org/jetbrains/java/decompiler/util/SFormsFastMapDirect.java
 +++ b/src/org/jetbrains/java/decompiler/util/SFormsFastMapDirect.java
 @@ -32,25 +32,6 @@ public class SFormsFastMapDirect {

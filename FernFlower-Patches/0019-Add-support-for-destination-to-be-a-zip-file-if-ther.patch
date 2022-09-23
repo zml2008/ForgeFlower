@@ -6,7 +6,7 @@ Subject: [PATCH] Add support for destination to be a zip file if there is only
 
 
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
-index 7d030ac89dc6a60e4fba63b9a350f12d3654b444..218aa6c1e5e62c5e91576528bd9dc126403d102a 100644
+index c5398222893b170023afa13fa5b6c773ab3edc8d..b44bf391a4914dcee3228cfbb3bbdfefec2f3527 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 @@ -100,7 +100,7 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {

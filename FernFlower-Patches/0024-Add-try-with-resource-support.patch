@@ -639,7 +639,7 @@ index a3ef4b8b5fdb820c520a21fcd727e08e9dfe2510..f4f8b55a68c10671beef7859540398ca
              graph.nodes.putWithKey(firstnd, firstnd.id);
  
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java b/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java
-index c3536d73475e1037a82e5f76a328c859f5507077..97c1d3f816dcfc21811da2097744bfe9e5747813 100644
+index 7c83c48777e2dc683d1321fb297f89466f62e8ce..97c1d3f816dcfc21811da2097744bfe9e5747813 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java
 @@ -10,18 +10,26 @@ import org.jetbrains.java.decompiler.modules.decompiler.DecHelper;
@@ -677,15 +677,6 @@ index c3536d73475e1037a82e5f76a328c859f5507077..97c1d3f816dcfc21811da2097744bfe9
    }
  
    private CatchStatement(Statement head, Statement next, Set<Statement> setHandlers) {
-@@ -43,7 +52,7 @@ public final class CatchStatement extends Statement {
-       if (setHandlers.contains(stat)) {
-         stats.addWithKey(stat, stat.id);
-         exctstrings.add(new ArrayList<>(edge.getExceptions()));
--        
-+
-         vars.add(new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
-                                 new VarType(CodeConstants.TYPE_OBJECT, 0, edge.getExceptions().get(0)),
-                                 // FIXME: for now simply the first type. Should get the first common superclass when possible.
 @@ -143,8 +152,25 @@ public final class CatchStatement extends Statement {
        tracer.incrementCurrentSourceLine();
      }

@@ -41,7 +41,7 @@ index a45067feeedaece4546ae2dbc5148fbf9b2c0309..7db5b328969a6dac49054e57b5c00c67
        public String method_name;
        public String method_descriptor;
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
-index 0bb8086bfe6052a5a9bdf4e27b2c5ab1a28eb896..726960464b0c4bedbf911961182ff6964110bf44 100644
+index 75d4d0937f1e39fe630b1318a4ad531de7fbd644..d0ae9a7c3b20de44cb202390cc0dfd4d690fee64 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 @@ -11,7 +11,7 @@ import org.jetbrains.java.decompiler.util.InterpreterUtil;
@@ -77,7 +77,7 @@ index 0bb8086bfe6052a5a9bdf4e27b2c5ab1a28eb896..726960464b0c4bedbf911961182ff696
 +          final ZipEntry newEntry = new ZipEntry(entryName);
 +          newEntry.setTime(entry.getTime());
 +          out.putNextEntry(newEntry);
-           in.transferTo(out);
+           InterpreterUtil.copyStream(in, out);
          }
        }
 @@ -236,7 +245,9 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {

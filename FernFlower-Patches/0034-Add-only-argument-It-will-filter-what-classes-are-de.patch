@@ -82,7 +82,7 @@ index ab8c1a60acfdef8c6ffb3082efbfbc1315d2c0bc..469b313a958cf8aca35fe98fc809880d
      }
      else if (converter != null) {
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
-index 218aa6c1e5e62c5e91576528bd9dc126403d102a..d66de611b9287925aeb5889effed66f9c3296740 100644
+index b44bf391a4914dcee3228cfbb3bbdfefec2f3527..e77afd845015501a743b091d3a3cc716497ffc75 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 @@ -66,6 +66,7 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {

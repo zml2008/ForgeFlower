@@ -5,7 +5,7 @@ Subject: [PATCH] Fix field initalizers
 
 
 diff --git a/src/org/jetbrains/java/decompiler/main/InitializerProcessor.java b/src/org/jetbrains/java/decompiler/main/InitializerProcessor.java
-index 4930acdf38046e1dfe3f04a7e68b4ff88c4ed594..686298a19d1ea4df848ff1ffd737f0ae70e92722 100644
+index 34be3854cad1675d54a32929d5e1fe1641f1a929..686298a19d1ea4df848ff1ffd737f0ae70e92722 100644
 --- a/src/org/jetbrains/java/decompiler/main/InitializerProcessor.java
 +++ b/src/org/jetbrains/java/decompiler/main/InitializerProcessor.java
 @@ -3,6 +3,7 @@ package org.jetbrains.java.decompiler.main;
@@ -207,6 +207,8 @@ index 4930acdf38046e1dfe3f04a7e68b4ff88c4ed594..686298a19d1ea4df848ff1ffd737f0ae
  
      return true;
    }
+-}
+\ No newline at end of file
 +
 +  // Makes lambdas that are used to initialize a static field only reference
 +  // static fields defined later in the class by qualified name
@@ -239,7 +241,7 @@ index 4930acdf38046e1dfe3f04a7e68b4ff88c4ed594..686298a19d1ea4df848ff1ffd737f0ae
 +      });
 +    }
 +  }
- }
++}
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FieldExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FieldExprent.java
 index b76d5dd1f39f3ef9a2847414bcf1cc3738b0fdae..be789c6f999339fc4d755850dfd888f600f73a45 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FieldExprent.java

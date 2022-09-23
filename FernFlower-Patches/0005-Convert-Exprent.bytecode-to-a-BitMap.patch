@@ -1081,7 +1081,7 @@ index 0946904c8610c2d21de597361e0adf377e88a675..163efe83fdfd94ccb945509fe4593f84
 +  }
 +}
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/stats/Statement.java b/src/org/jetbrains/java/decompiler/modules/decompiler/stats/Statement.java
-index c9f706ae166b308203493da1d0823b7cd4983647..07b30b68e4be16609891044cb442a26d5dfcaed0 100644
+index 272601270ea32fb5ccc4a822cd9d1b959bae9c35..9d5fcfd4c907e69c52965517dfe69e3a2f82c5df 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/stats/Statement.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/stats/Statement.java
 @@ -19,6 +19,7 @@ import org.jetbrains.java.decompiler.struct.match.IMatchable;
@@ -1092,7 +1092,7 @@ index c9f706ae166b308203493da1d0823b7cd4983647..07b30b68e4be16609891044cb442a26d
  import org.jetbrains.java.decompiler.util.TextBuffer;
  import org.jetbrains.java.decompiler.util.VBStyleCollection;
  
-@@ -797,6 +798,40 @@ public abstract class Statement implements IMatchable {
+@@ -796,6 +797,40 @@ public abstract class Statement implements IMatchable {
      return Integer.toString(id);
    }
  

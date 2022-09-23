@@ -246,7 +246,7 @@ index 469b313a958cf8aca35fe98fc809880d12db671e..eefcf79cedb6148f5c02b8077914a467
    public String getClassContent(StructClass cl) {
      try {
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
-index d66de611b9287925aeb5889effed66f9c3296740..53e03fafff09adb1377fee47b1da8ae171628911 100644
+index e77afd845015501a743b091d3a3cc716497ffc75..7af078ed357349951585906564c1bf8239c0c810 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 @@ -109,7 +109,7 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {

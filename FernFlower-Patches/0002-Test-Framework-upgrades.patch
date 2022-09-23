@@ -20,7 +20,7 @@ index bb303e84f33161a4b4fd40a73aa48d29981d9ef2..cc1f537e71af0748b7b97d7d8489198e
      throw new RuntimeException("not implemented");
    }
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/stats/Statement.java b/src/org/jetbrains/java/decompiler/modules/decompiler/stats/Statement.java
-index 245e6685f03711a50a5a81626aa865012db1b210..c9f706ae166b308203493da1d0823b7cd4983647 100644
+index c870c683cad7935d7aba141c0310ec0f0a2fdeda..272601270ea32fb5ccc4a822cd9d1b959bae9c35 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/stats/Statement.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/stats/Statement.java
 @@ -430,6 +430,10 @@ public abstract class Statement implements IMatchable {

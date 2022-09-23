@@ -5,7 +5,7 @@ Subject: [PATCH] Search generics when finding where to inject local classes.
 
 
 diff --git a/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java b/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
-index 05726e7bd04283a99c6ba906b9e46be98c3e8b64..1d1d4d45d2195518eb1cc7c32e8c187229f9b22d 100644
+index b531db78bf55aed572f05215033c290bbb9e05c0..9cdaa21a937fb4ec4b326a00b9be942342fd716c 100644
 --- a/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
 +++ b/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
 @@ -25,6 +25,7 @@ import org.jetbrains.java.decompiler.struct.attr.StructGeneralAttribute;

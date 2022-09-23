@@ -10,7 +10,7 @@ Add -dcl {dump code lines} to dump this line data to a file in the output archiv
 This will allow external projects to do this remapping as well.
 
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
-index 53e03fafff09adb1377fee47b1da8ae171628911..96888d4bfa244e22c0bb7cb035e4df3ba5989491 100644
+index 7af078ed357349951585906564c1bf8239c0c810..b4869c2a756adb1c2da8b62fd8d4dc3f3f7cb2ca 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 @@ -255,7 +255,7 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {

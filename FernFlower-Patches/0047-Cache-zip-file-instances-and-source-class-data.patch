@@ -17,7 +17,7 @@ index eefcf79cedb6148f5c02b8077914a467f3d58b64..025a8ac22323407bf6b2a4f3e70a0409
    }
  
 diff --git a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
-index 96888d4bfa244e22c0bb7cb035e4df3ba5989491..5a332b73b0a93fdc006f4479cc2e5074cbb70ecc 100644
+index b4869c2a756adb1c2da8b62fd8d4dc3f3f7cb2ca..1172775610851755373694f48903594af615f816 100644
 --- a/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 +++ b/src/org/jetbrains/java/decompiler/main/decompiler/ConsoleDecompiler.java
 @@ -7,6 +7,7 @@ import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;

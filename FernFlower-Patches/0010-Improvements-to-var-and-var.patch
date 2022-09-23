@@ -5,7 +5,7 @@ Subject: [PATCH] Improvements to var++ and var--
 
 
 diff --git a/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java b/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
-index 57cd6fb1de812fb7de6349f2d809b58f8829f4de..b7b542de1ccf9d2bf8e514b96465bb46a8c777e0 100644
+index 09a5887befc045f8faef7a1c53a71387ea8ff890..52575665f1021b39a09412a774587b10dad34812 100644
 --- a/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
 +++ b/src/org/jetbrains/java/decompiler/main/rels/NestedClassProcessor.java
 @@ -926,7 +926,7 @@ public class NestedClassProcessor {

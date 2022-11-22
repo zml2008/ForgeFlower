@@ -28,11 +28,14 @@ dependencies {
 }
 
 // Default all standard Java compile tasks to Java 17
-java.toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    withSourcesJar()
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.deprecation = true
 }
 
@@ -42,15 +45,19 @@ eclipse {
     }
 }
 
+def ffMainClass = 'org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler'
 jar {
     manifest {
         attributes(
-            'Main-Class' : 'org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler'
+            'Main-Class' : ffMainClass
         )
     }
 }
 
-java.withSourcesJar()
+tasks.named('compileJava').configure {
+    options.javaModuleMainClass = ffMainClass
+    options.javaModuleVersion = project.version.toString()
+}
 
 publishing {
     publications {

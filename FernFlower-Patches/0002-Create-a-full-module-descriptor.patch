@@ -1,0 +1,17 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zml <zml@stellardrift.ca>
+Date: Tue, 22 Nov 2022 14:01:56 -0800
+Subject: [PATCH] Create a full module descriptor
+
+The module name used here matches the one used by upstream in their
+manifest.
+
+diff --git a/src/module-info.java b/src/module-info.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..c4904e39742bbdc2dfbf6d3e890ca795b1da3556
+--- /dev/null
++++ b/src/module-info.java
+@@ -0,0 +1,3 @@
++open module org.jetbrains.java.decompiler {
++  requires static org.jetbrains.annotations;
++}

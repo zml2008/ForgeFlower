@@ -1,19 +1,7 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven { url = 'https://files.minecraftforge.net/maven/'}
-    }
-    dependencies {
-        classpath 'net.minecraftforge:gitpatcher:0.10.+'
-    }
-}
-
 plugins {
+    id 'net.minecraftforge.gitpatcher' version '0.10.+'
     id 'net.minecraftforge.gradleutils' version '2.+'
 }
-
-apply plugin: 'net.minecraftforge.gitpatcher'
 
 patches {
     submodule = 'FernFlower'
